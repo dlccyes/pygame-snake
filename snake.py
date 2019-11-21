@@ -124,7 +124,7 @@ def how_snake_die():
 
 def obstacle(x,y,w,h):
     global screen, colordict, x_player, y_player, x_food, y_food, obs_x,obs_y,obs_w,obs_h
-    pygame.draw.rect(screen,colordict['blue'],(x*gridSize,y*gridSize,w*gridSize,h*gridSize))
+    # pygame.draw.rect(screen,colordict['blue'],(x*gridSize,y*gridSize,w*gridSize,h*gridSize))
     if x*gridSize < (x_player*2+gridSize)/2 < (x+w)*gridSize and y*gridSize < (y_player*2+gridSize)/2 < (y+h)*gridSize:
         how_snake_die()
     obs_x,obs_y,obs_w,obs_h = x,y,w,h  
@@ -134,7 +134,8 @@ def generate_food():
     x_food = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize #grid num * grid size
     y_food = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
 
-    while (x_food, y_food) in bodies or obs_x*gridSize < (x_food*2+gridSize)/2 < (obs_x+obs_w)*gridSize and y_food < (y_player*2+gridSize)/2 < (obs_y+obs_h)*gridSize:
+    while (x_food, y_food) in bodies or obs_x*gridSize < (x_food*2+gridSize)/2 < (obs_x+obs_w)*gridSize and obs_y*gridSize < (y_food*2+gridSize)/2 < (obs_y+obs_h)*gridSize:
+        print('suckme')
         x_food = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize
         y_food = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
     return x_food, y_food
@@ -206,7 +207,7 @@ def snake_game():
         #     x_player = screenWidth - gridSize
         # if y_player < 0 :
         #     y_player = screenHeight - gridSize
-
+        obstacle(5,4,8,8)
         if isEaten:
             x_food, y_food = generate_food()
             isEaten = False
@@ -225,8 +226,9 @@ def snake_game():
         screen.fill((0, 0, 0))
 
 
-        obstacle(5,4,8,8)
+        
         #draw food
+        pygame.draw.rect(screen,colordict['blue'],(obs_x*gridSize,obs_y*gridSize,obs_w*gridSize,obs_h*gridSize))
         pygame.draw.rect(screen, (255, 255, 0), (x_food, y_food, gridSize, gridSize))
 
         #draw the body
