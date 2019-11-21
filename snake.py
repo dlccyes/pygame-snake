@@ -27,12 +27,7 @@ colordict = {'blue':(54,135,255),'black':(0,0,0),'white':(255,255,255),'pink':(2
 # pink = (255,131,239)
 # red = (255,0,0)
 
-def obstacle(x,y,w,h):
-    global screen, colordict, x_player, y_player
-    pygame.draw.rect(screen,colordict['blue'],(x*gridSize,y*gridSize,w*gridSize,h*gridSize))
-    # head_center = 
-    if x*gridSize < (x_player*2+gridSize)/2 < (x+w)*gridSize and y*gridSize < (y_player*2+gridSize)/2 < (y+h)*gridSize:
-        how_snake_die()
+
 
 def button(pressed_color, unpressed_color, text, text_color, x_pos, y_pos, width, height, action = None):
     global screen, colordict
@@ -126,16 +121,27 @@ def how_snake_die():
     #     pygame.quit()
     #     sys.exit()
     # elif restart == True:
-        
+
+def obstacle(x,y,w,h):
+    global screen, colordict, x_player, y_player, x_food, y_food, obs_x,obs_y,obs_w,obs_h
+    pygame.draw.rect(screen,colordict['blue'],(x*gridSize,y*gridSize,w*gridSize,h*gridSize))
+    if x*gridSize < (x_player*2+gridSize)/2 < (x+w)*gridSize and y*gridSize < (y_player*2+gridSize)/2 < (y+h)*gridSize:
+        how_snake_die()
+    obs_x,obs_y,obs_w,obs_h = x,y,w,h  
 
 def generate_food():
-    global x_food, y_food, bodies, screenWidth, screenHeight, gridSize
+    global x_food, y_food, bodies, screenWidth, screenHeight, gridSize, obs_x,obs_y,obs_w,obs_h
     x_food = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize #grid num * grid size
     y_food = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
-    while (x_food, y_food) in bodies:
+
+    while (x_food, y_food) in bodies or obs_x*gridSize < (x_food*2+gridSize)/2 < (obs_x+obs_w)*gridSize and y_food < (y_player*2+gridSize)/2 < (obs_y+obs_h)*gridSize:
         x_food = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize
         y_food = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
     return x_food, y_food
+
+
+
+    
 #Game Loop
 def snake_game():
     global game_speed, x_food, y_food, x_player, y_player, gridSize, screenWidth, screenHeight, bodies, delay, tail_length, screen, isGame, isEaten, colordict
@@ -219,7 +225,7 @@ def snake_game():
         screen.fill((0, 0, 0))
 
 
-        obstacle(10,10,3,3)
+        obstacle(5,4,8,8)
         #draw food
         pygame.draw.rect(screen, (255, 255, 0), (x_food, y_food, gridSize, gridSize))
 
