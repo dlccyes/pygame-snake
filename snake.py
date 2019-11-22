@@ -21,12 +21,8 @@ bodies = list()
 tail_length = 1
 isGame = True
 isEaten = True
-colordict = {'blue':(54,135,255),'black':(0,0,0),'white':(255,255,255),'pink':(255,131,239),'red':(255,0,0)}
-# black = (255,255,255)
-
-# pink = (255,131,239)
-# red = (255,0,0)
-
+isEaten_slowpill = True
+colordict = {'yellow':(255,255,0),'blue':(54,135,255),'black':(0,0,0),'white':(255,255,255),'pink':(255,131,239),'red':(255,0,0)}
 
 
 def button(pressed_color, unpressed_color, text, text_color, x_pos, y_pos, width, height, action = None):
@@ -61,10 +57,7 @@ def reset():
     y_food = 0 #food's y pos
     x_player = 0 #snake's head's x pos
     y_player = 0 #snake's head's y pos
-    # up = False
-    # down = False
-    # right = False 
-    # left = False
+
     bodies = list()
     tail_length = 1
     isEaten = True
@@ -80,13 +73,6 @@ def how_snake_die():
     pygame.display.flip()
     time.sleep(2) # time.delay
     screen.fill(colordict['black'])
-
-    # pygame.draw.rect(screen, (0, 0, 0), (425,350,1000,100)) #cover previous text with black box
-    
-    #draw same txet with black to cover
-    # score_text = font.render("Congrats you got " + str(tail_length - 1) + " points!",4,colordict['black'])
-    # screen.blit(score_text,(425,350))
-    # pygame.display.flip()
     
     while isGame:
         # pygame.time.delay(delay)
@@ -96,31 +82,7 @@ def how_snake_die():
         button('red','pink','quit','white',400,300,120,60,quit_game)
         button('red','pink','restart','white',600,300,120,60,reset)
         pygame.display.update()
-    
-    # font = pygame.font.SysFont('Calibri', 30)
-    # score_text = font.render(('press Q to quit, press R to restart'),4,(255,0,0))
-    # screen.blit(score_text,(425,350))
-    # pygame.display.flip()
-    # print(bool(keys[pygame.K_q]==1))
 
-
-    # sys.exit() 
-    # pygame.quit()
-
-    # while 1:
-    #     print(keys[pygame.K_q],keys[pygame.K_k])
-    #     if keys[pygame.K_q] == 1 and keys[pygame.K_k] == 0:
-    #         quit = True
-    #         break
-    #     elif keys[pygame.K_k] == 1 and keys[pygame.K_q] == 0:
-    #         restart = True
-    #         break
-    # time.sleep(1)
-    # if quit == True:
-    #     time.sleep(1) #delay 1s
-    #     pygame.quit()
-    #     sys.exit()
-    # elif restart == True:
 
 def obstacle(x,y,w,h):
     global screen, colordict, x_player, y_player, x_food, y_food, obs_x,obs_y,obs_w,obs_h
@@ -135,17 +97,25 @@ def generate_food():
     y_food = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
 
     while (x_food, y_food) in bodies or obs_x*gridSize < (x_food*2+gridSize)/2 < (obs_x+obs_w)*gridSize and obs_y*gridSize < (y_food*2+gridSize)/2 < (obs_y+obs_h)*gridSize:
-        print('suckme')
         x_food = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize
         y_food = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
     return x_food, y_food
 
+#same as a food except speed set back to default when eaten
+def generate_slowpill():
+    global x_slowpill, y_slowpill, bodies, screenWidth, screenHeight, gridSize, obs_x,obs_y,obs_w,obs_h
+    x_slowpill = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize #grid num * grid size
+    y_slowpill = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
 
+    while (x_slowpill, y_slowpill) in bodies or obs_x*gridSize < (x_slowpill*2+gridSize)/2 < (obs_x+obs_w)*gridSize and obs_y*gridSize < (y_slowpill*2+gridSize)/2 < (obs_y+obs_h)*gridSize:
+        x_slowpill = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize
+        y_slowpill = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
+    return x_slowpill, y_slowpill
 
     
 #Game Loop
 def snake_game():
-    global game_speed, x_food, y_food, x_player, y_player, gridSize, screenWidth, screenHeight, bodies, delay, tail_length, screen, isGame, isEaten, colordict
+    global x_slowpill,y_slowpill,isEaten_slowpill, game_speed, x_food, y_food, x_player, y_player, gridSize, screenWidth, screenHeight, bodies, delay, tail_length, screen, isGame, isEaten, colordict
     
     screen = pygame.display.set_mode((screenWidth, screenHeight))
     velocity = gridSize
@@ -199,37 +169,38 @@ def snake_game():
         #when touches boundary
         if x_player < 0 or x_player > screenWidth - gridSize or y_player < 0 or y_player > screenHeight - gridSize:
             how_snake_die()
-        # if x_player > screenWidth - gridSize :
-        #     x_player = 0
-        # if y_player > screenHeight - gridSize :
-        #     y_player = 0
-        # if x_player < 0 :
-        #     x_player = screenWidth - gridSize
-        # if y_player < 0 :
-        #     y_player = screenHeight - gridSize
+
         obstacle(5,4,8,8)
         if isEaten:
             x_food, y_food = generate_food()
             isEaten = False
             delay -= game_speed
+
+        if isEaten_slowpill:
+            x_slowpill, y_slowpill = generate_slowpill()
+            isEaten_slowpill = False
+            delay = 140 #set speed back to the start
             
         if (x_player, y_player) == (x_food, y_food):
             isEaten = True
             tail_length += 1
 
+        if (x_player, y_player) == (x_slowpill, y_slowpill):
+            isEaten_slowpill = True
+
+
         while (len(bodies) > tail_length):
             del (bodies[0])
-        
-        
-
-        
+              
         screen.fill((0, 0, 0))
-
 
         
         #draw food
         pygame.draw.rect(screen,colordict['blue'],(obs_x*gridSize,obs_y*gridSize,obs_w*gridSize,obs_h*gridSize))
-        pygame.draw.rect(screen, (255, 255, 0), (x_food, y_food, gridSize, gridSize))
+        pygame.draw.rect(screen,colordict['yellow'], (x_food, y_food, gridSize, gridSize))
+
+        #draw slowpill
+        pygame.draw.rect(screen,colordict['red'],(x_slowpill,y_slowpill,gridSize,gridSize))
 
         #draw the body
         for body in bodies :
@@ -249,11 +220,6 @@ def snake_game():
 
         #update the screen
         pygame.display.update()
-
-# def main():
-#     """start the game"""
-
-
 
 if __name__ == '__main__':
     snake_game()
