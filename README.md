@@ -3,7 +3,7 @@ use pygame to develop a snake game
 
 ## Basic Rules
 ### Boundaries
-u die when snake touches the buondaries of the game screen
+u die when snake touches the boundaries of the game screen
 
 ### Obstacles
 u die when snake touches the obstacle (blue rectangle)
