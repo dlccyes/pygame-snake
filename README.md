@@ -12,4 +12,4 @@ u die when snake touches the obstacle (blue rectangle)
 when snake eats it, snake grows longer (for 1 grid) and snake's movement becomes a little bit faster
 
 ### Slowpill
-when snake eats it, snake's speed set back to default (at least for now)
+when snake eats it, snake will slow down
