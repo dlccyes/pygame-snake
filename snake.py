@@ -118,6 +118,7 @@ def obstacle(x,y,w,h,index):
     global screen, colordict, x_player, y_player, x_food, y_food,\
     l_obs_x,l_obs_y,l_obs_w,l_obs_h
     # pygame.draw.rect(screen,colordict['blue'],(x*gridSize,y*gridSize,w*gridSize,h*gridSize))
+    #die if snake touches obstacles
     if (x*gridSize < (x_player*2+gridSize)/2 < (x+w)*gridSize 
         and y*gridSize < (y_player*2+gridSize)/2 < (y+h)*gridSize):
         how_snake_die()
@@ -125,7 +126,7 @@ def obstacle(x,y,w,h,index):
     if len(l_obs_x) <= index:
         l_obs_x.append(x)
     else:
-        l_obs_x[index] = x 
+        l_obs_x[index] = x
     if len(l_obs_y) <= index:
         l_obs_y.append(y)
     else:
@@ -149,6 +150,7 @@ def generate_food_pos():
         while ((x_food, y_food) in bodies
             or obs_x*gridSize < (x_food*2+gridSize)/2 < (obs_x+obs_w)*gridSize
             and obs_y*gridSize < (y_food*2+gridSize)/2 < (obs_y+obs_h)*gridSize):
+            print('fucku')
             x_food = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize
             y_food = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
     return x_food, y_food
@@ -169,28 +171,105 @@ def generate_slowpill_pos():
     return x_slowpill, y_slowpill
 
 def level_1():
-    global tail_length, next_level_unlocked
-    if tail_length == 11:
-        next_level_unlocked = True
-    #parameters
-    obstacle(0,0,screenWidth/gridSize,1,0)
-    obstacle(0,screenHeight/gridSize-1,screenWidth/gridSize,1,1)
-    obstacle(0,0,1,screenHeight/gridSize,2)
-    obstacle(screenWidth/gridSize-1,0,1,(screenHeight/gridSize-1)/2,3)
-    obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)/2+1,1,(screenHeight/gridSize-1)/2,4)
-    if next_level_unlocked == False:
-        obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)/2,1,1,5)
-    else:
-        obstacle(0,0,0,0,5)
+    global tail_length, next_level_unlocked, x_player, y_player,obstacle,screenHeight,\
+    screenWidth,gridSize,level_2,delay,level_common
 
-# def level
+    if tail_length == 5: #score = 10
+        next_level_unlocked = True
+        # print('yeah')
+
+    level_common(level_1,level_2)
+
+def level_2():
+    """level 2 of the game"""
+    global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
+    screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common
+    # if next_level_unlocked == True:
+    if tail_length == 5: #score = 10
+        next_level_unlocked = True
+    else:
+        next_level_unlocked = False
+    # print('ok boomer',next_level_unlocked)
+    obstacle(10,7,4,4,8)
+    # dict_level['level1'] = False
+    # dict_level['level2'] = True
+
+    level_common(level_2,level_3)
+
+    # obstacle(0,0,screenWidth/gridSize,1,0) #top bar
+    # obstacle(0,screenHeight/gridSize-1,screenWidth/gridSize,1,1) #bottom bar
+    # obstacle(0,0,1,(screenHeight/gridSize-1)/2,2) #left top bar
+    # obstacle(0,(screenHeight/gridSize-1)/2+1,1,(screenHeight/gridSize-1)/2,3) #left bottom bar
+    # obstacle(screenWidth/gridSize-1,0,1,(screenHeight/gridSize-1)/2,4) #right top bar
+    # obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)/2+1,1,(screenHeight/gridSize-1)/2,5) #right bottom bar
+    # # obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)/2,1,1,6) #right middle block
+    # # obstacle(0,(screenHeight/gridSize-1)/2,1,1,7) #left middle block
+    # if next_level_unlocked == False:
+    #     generate_food = True
+    #     obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)/2,1,1,6) #right middle block
+    #     # obstacle(0,(screenHeight/gridSize-1)/2,1,1,7) #left middle block
+    # elif next_level_unlocked == True:
+    #     obstacle(0,0,0,0,6) #open a "hole" on the right parameter
+    #     if x_player+gridSize/2 >= screenWidth-gridSize and (screenHeight-gridSize)/2 < y_player+gridSize/2 < (screenHeight-gridSize)/2+gridSize:
+    #         print('fuckme')
+    #         tail_length = 1
+    #         #snake goes into the hole then appears on the left
+    #         x_player,y_player = 1*gridSize,(screenHeight-gridSize)/2
+    #         # obstacle(0,0,0,0,7) #open a "hole" on the left parameter
+    #         # obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)/2,1,1,6) #right middle block
+    #         delay = 140
+    #         level_3()
+
+def level_common(level,next_level):
+    global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
+    screenWidth,gridSize,tail_length,x_player,y_player,delay,level_1,level_2,level_3
+    # print(list(str(level)).index('_'),)
+    # list(str(level))[list(str(level)).index('_')+1]
+    # print('level%s'%str(int(list(str(level))[list(str(level)).index('_')+1])-1))
+    if level != level_1:
+        dict_level['level%s'%str(int(list(str(level))[list(str(level)).index('_')+1])-1)] = False
+        dict_level['level%s'%str(list(str(level))[list(str(level)).index('_')+1])] = True
+    # print(dict_level)
+    #parameters
+    obstacle(0,0,screenWidth/gridSize,1,0) #top bar
+    obstacle(0,screenHeight/gridSize-1,screenWidth/gridSize,1,1) #bottom bar
+    obstacle(0,0,1,(screenHeight/gridSize-1)/2,2) #left top bar
+    obstacle(0,(screenHeight/gridSize-1)/2+1,1,(screenHeight/gridSize-1)/2,3) #left bottom bar
+    obstacle(screenWidth/gridSize-1,0,1,(screenHeight/gridSize-1)/2,4) #right top bar
+    obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)/2+1,1,(screenHeight/gridSize-1)/2,5) #right bottom bar
+    # obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)/2,1,1,6) #right middle block
+    # obstacle(0,(screenHeight/gridSize-1)/2,1,1,7) #left middle block
+    if next_level_unlocked == False:
+        generate_food = True
+        obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)/2,1,1,6) #right middle block
+        if level == level_1:
+            obstacle(0,(screenHeight/gridSize-1)/2,1,1,7) #left middle block
+            # print('noway')
+    elif next_level_unlocked == True:
+        obstacle(0,0,0,0,6) #open a "hole" on the right parameter
+        if x_player+gridSize/2 >= screenWidth-gridSize and (screenHeight-gridSize)/2 < y_player+gridSize/2 < (screenHeight-gridSize)/2+gridSize:
+            # print('fuckme')
+            tail_length = 1
+            #snake goes into the hole then appears on the left
+            x_player,y_player = 1*gridSize,(screenHeight-gridSize)/2
+            if level == level_1:
+                obstacle(0,0,0,0,7) #open a "hole" on the left parameter
+                # print('NicE')
+            # obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)/2,1,1,6) #right middle block
+            delay = 140
+            next_level()
+
+def level_3():
+    """level 3 of the game"""
+    pass
+
 
 #Game Loop
 def snake_game():
     global generate_slowpill,x_slowpill,y_slowpill,isEaten_slowpill, game_speed,\
     x_food, y_food, x_player, y_player, gridSize, screenWidth, screenHeight, bodies,\
     delay, tail_length, screen, isGame, isEaten, colordict, next_level_unlocked,\
-    generate_food, next_level_unlocked,l_obs_x,l_obs_y,l_obs_w,l_obs_h
+    generate_food, next_level_unlocked,l_obs_x,l_obs_y,l_obs_w,l_obs_h,level_1,level_2
     
     screen = pygame.display.set_mode((screenWidth, screenHeight))
     velocity = gridSize
@@ -211,7 +290,7 @@ def snake_game():
         game_time = pygame.time.get_ticks() - start_time #in-game time
 
         if up != False or down != False or right != False or left != False :
-            #if snake's head touches its body
+            #die if snake's head touches its body
             for body in bodies :
                 if x_player == body[0] and y_player == body[1] :
                     how_snake_die()
@@ -240,7 +319,7 @@ def snake_game():
             up = left = down = False
 
 
-        print(l_obs_x)
+        # print(l_obs_x)
 
         if up :
             y_player -= velocity
@@ -252,28 +331,30 @@ def snake_game():
             x_player += velocity
 
         #when touches boundary
-        if (x_player < 0 or x_player > screenWidth - gridSize 
-                or y_player < 0 or y_player > screenHeight - gridSize):
-            how_snake_die()
+        # if (x_player < 0 or x_player > screenWidth - gridSize 
+        #         or y_player < 0 or y_player > screenHeight - gridSize):
+        #     how_snake_die()
 
         # obstacle(0,0,0,0) #level 1
         # obstacle(5,4,8,8) #level 2
 
-
+        # print(dict_level,next_level_unlocked)
 
         if dict_level['level1'] == True:
             level_1()
-            if next_level_unlocked == True:
-                # dict_level['level1'] = False
-                dict_level['level2'] = True
+            # print(next_level_unlocked)
+            # if next_level_unlocked == True:
+            #     # dict_level['level1'] = False
+            #     dict_level['level2'] = True
 
         if dict_level['level2'] == True:
-            pass
-            # level_2()
+            # pass
+            level_2()
+            # print(next_level_unlocked)
             # if next_level_unlocked == True:
             #     dict_level['level2'] = True
 
-        # print(delay)
+        # print(isEaten)
 
         if next_level_unlocked == True:
             generate_slowpill = False
@@ -306,6 +387,7 @@ def snake_game():
               
         screen.fill((0, 0, 0))
 
+        # print(bodies)
         #draw obstacle
         
         for obs_x,obs_y,obs_w,obs_h in zip(l_obs_x,l_obs_y,l_obs_w,l_obs_h):
