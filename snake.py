@@ -7,7 +7,8 @@ def main():
     global screenWidth,screenHeight,game_speed,gridSize,delay,\
     x_food,y_food,x_player,y_player,bodies,tail_length,isGame,isEaten,\
     isEaten_slowpill,generate_slowpill,colordict,next_level_unlocked,\
-    generate_food, l_obs_x,l_obs_y,l_obs_w,l_obs_h,dict_level
+    generate_food, l_obs_x,l_obs_y,l_obs_w,l_obs_h,dict_level,total_score,obstacle_index,\
+    moving_obs_y_1,moving_obs_y_2,moving_obstacle
     pygame.init()
 
     screenWidth = 1080
@@ -31,10 +32,13 @@ def main():
     generate_food = True
     next_level_unlocked = False
     l_obs_x,l_obs_y,l_obs_w,l_obs_h = [],[],[],[]
-    dict_level={'level1':True,'level2':False}
-
+    dict_level={'level1':True,'level2':False,'level3':False}
     colordict = {'yellow':(255,255,0),'blue':(54,135,255),'black':(0,0,0),\
     'white':(255,255,255),'pink':(255,131,239),'red':(255,0,0)}
+    total_score = 0
+    obstacle_index = dict()
+    # mov_x,mov_y,mov_w,mov_h = 0,0,0,0
+    moving_obs_y_1,moving_obs_y_2 = 0,0
 
     snake_game()
 
@@ -94,7 +98,7 @@ def how_snake_die():
     screen.fill(colordict['black'])
 
     font = pygame.font.SysFont('Calibri', 30)
-    score_text = font.render("Congrats you got " + str(tail_length - 1) 
+    score_text = font.render("Congrats you got " + str(total_score) 
         + " points!",4,colordict['red'])
     score_text_rect = score_text.get_rect()
     score_text_rect.center = (screenWidth/2 , screenHeight/2)
@@ -112,15 +116,21 @@ def how_snake_die():
         button('red','pink','restart','white',580,screenHeight/2-60/2,120,60,main)
         pygame.display.update()
 
-
 def obstacle(x,y,w,h,index):
     global screen, colordict, x_player, y_player, x_food, y_food,\
-    l_obs_x,l_obs_y,l_obs_w,l_obs_h
+    l_obs_x,l_obs_y,l_obs_w,l_obs_h,obstacle_index,gridSize
  
     #die if snake touches obstacles
     if (x*gridSize < (x_player*2+gridSize)/2 < (x+w)*gridSize 
         and y*gridSize < (y_player*2+gridSize)/2 < (y+h)*gridSize):
         how_snake_die()
+
+    #body touch obstacle
+    for body in bodies:
+        if (x*gridSize < (body[0]*2+gridSize)/2 < (x+w)*gridSize 
+            and y*gridSize < (body[1]*2+gridSize)/2 < (y+h)*gridSize):
+            how_snake_die()    
+
     # obs_x,obs_y,obs_w,obs_h = x,y,w,h
     if len(l_obs_x) <= index:
         l_obs_x.append(x)
@@ -171,9 +181,9 @@ def generate_slowpill_pos():
 
 def level_1():
     global tail_length, next_level_unlocked, x_player, y_player,obstacle,screenHeight,\
-    screenWidth,gridSize,level_2,delay,level_common
+    screenWidth,gridSize,level_2,delay,level_common,obstacle_index
 
-    if tail_length == 5: #score = 10
+    if tail_length == 2: #score = 10
         next_level_unlocked = True
 
     level_common(level_1,level_2)
@@ -181,56 +191,91 @@ def level_1():
 def level_2():
     """level 2 of the game"""
     global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
-    screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common
+    screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common,obstacle_index
 
-    if tail_length == 5: #score = 10
+    if tail_length == 2: #score = 10
         next_level_unlocked = True
+        obstacle(0,0,0,0,obstacle_index['level2_obstacle'])
     else:
         next_level_unlocked = False
 
-    obstacle(10,7,4,4,8)
+        obstacle_index['level2_obstacle'] = 8
+        obstacle(10,7,4,4,obstacle_index['level2_obstacle'])
+
 
     level_common(level_2,level_3)
+
+def level_3():
+    """level 3 of the game"""
+    global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
+    screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common,obstacle_index,\
+    moving_obs_y_1,moving_obs_y_2,moving_obstacle
+
+    if tail_length == 15: #score = 10
+        next_level_unlocked = True
+    else:
+        next_level_unlocked = False
+        moving_obs_y_1 += 1
+        moving_obs_y_2 += 1
+        obstacle_index['level3_moving_obstacle_1'] = 9
+        obstacle_index['level3_moving_obstacle_2'] = 10
+        obstacle(7,moving_obs_y_1,1,3,obstacle_index['level3_moving_obstacle_1'])
+        obstacle(17,moving_obs_y_2,1,3,obstacle_index['level3_moving_obstacle_2'])
+        if moving_obs_y_1 >= screenHeight/gridSize:
+            moving_obs_y_1 = 0
+        if moving_obs_y_2 >= screenHeight/gridSize:
+            moving_obs_y_2 = 0
+    
+
+    level_common(level_3,level_4)
+
+def level_4():
+    pass
 
 
 def level_common(level,next_level):
     global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
-    screenWidth,gridSize,tail_length,x_player,y_player,delay,level_1,level_2,level_3
+    screenWidth,gridSize,tail_length,x_player,y_player,delay,level_1,level_2,level_3,obstacle_index,\
+    level_4
 
     if level != level_1:
         dict_level['level%s'%str(int(list(str(level))[list(str(level)).index('_')+1])-1)] = False
         dict_level['level%s'%str(list(str(level))[list(str(level)).index('_')+1])] = True
 
     #parameters
-    obstacle(0,0,screenWidth/gridSize,1,0) #top bar
-    obstacle(0,screenHeight/gridSize-1,screenWidth/gridSize,1,1) #bottom bar
-    obstacle(0,0,1,(screenHeight/gridSize-1)/2,2) #left top bar
-    obstacle(0,(screenHeight/gridSize-1)/2+1,1,(screenHeight/gridSize-1)/2,3) #left bottom bar
-    obstacle(screenWidth/gridSize-1,0,1,(screenHeight/gridSize-1)/2,4) #right top bar
-    obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)/2+1,1,(screenHeight/gridSize-1)/2,5) #right bottom bar
+    obstacle_index['top_bar'] = 0
+    obstacle_index['bottom_bar'] = 1
+    obstacle_index['left_top_bar'] = 2
+    obstacle_index['left_bottom_bar'] = 3
+    obstacle_index['right_top_bar'] = 4
+    obstacle_index['right_bottom_bar'] = 5
+    obstacle(0,0,screenWidth/gridSize,1,obstacle_index['top_bar']) #top bar
+    obstacle(0,screenHeight/gridSize-1,screenWidth/gridSize,1,obstacle_index['bottom_bar']) #bottom bar
+    obstacle(0,0,1,(screenHeight/gridSize-1)/2,obstacle_index['left_top_bar']) #left top bar
+    obstacle(0,(screenHeight/gridSize-1)/2+1,1,(screenHeight/gridSize-1)/2,obstacle_index['left_bottom_bar']) #left bottom bar
+    obstacle(screenWidth/gridSize-1,0,1,(screenHeight/gridSize-1)/2,obstacle_index['right_top_bar']) #right top bar
+    obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)/2+1,1,(screenHeight/gridSize-1)/2,obstacle_index['right_bottom_bar']) #right bottom bar
 
     if next_level_unlocked == False:
         generate_food = True
-        obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)/2,1,1,6) #right middle block
+        obstacle_index['right_middle_block'] = 6
+        obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)/2,1,1,obstacle_index['right_middle_block']) #right middle block
         if level == level_1:
-            obstacle(0,(screenHeight/gridSize-1)/2,1,1,7) #left middle block
+            obstacle_index['left_middle_block'] = 7
+            obstacle(0,(screenHeight/gridSize-1)/2,1,1,obstacle_index['left_middle_block']) #left middle block
 
     elif next_level_unlocked == True:
-        obstacle(0,0,0,0,6) #open a "hole" on the right parameter
+        obstacle(0,0,0,0,obstacle_index['right_middle_block']) #open a "hole" on the right parameter
         if x_player+gridSize/2 >= screenWidth-gridSize and (screenHeight-gridSize)/2 < y_player+gridSize/2 < (screenHeight-gridSize)/2+gridSize:
 
             tail_length = 1
             #snake goes into the hole then appears on the left
             x_player,y_player = 1*gridSize,(screenHeight-gridSize)/2
             if level == level_1:
-                obstacle(0,0,0,0,7) #open a "hole" on the left parameter
+                obstacle(0,0,0,0,obstacle_index['left_middle_block']) #open a "hole" on the left parameter
 
             delay = 140
             next_level()
-
-def level_3():
-    """level 3 of the game"""
-    pass
 
 
 #Game Loop
@@ -238,7 +283,8 @@ def snake_game():
     global generate_slowpill,x_slowpill,y_slowpill,isEaten_slowpill, game_speed,\
     x_food, y_food, x_player, y_player, gridSize, screenWidth, screenHeight, bodies,\
     delay, tail_length, screen, isGame, isEaten, colordict, next_level_unlocked,\
-    generate_food, next_level_unlocked,l_obs_x,l_obs_y,l_obs_w,l_obs_h,level_1,level_2
+    generate_food, next_level_unlocked,l_obs_x,l_obs_y,l_obs_w,l_obs_h,level_1,level_2,\
+    total_score,obstacle_index
     
     screen = pygame.display.set_mode((screenWidth, screenHeight))
     velocity = gridSize
@@ -252,6 +298,8 @@ def snake_game():
     while isGame :
         #Game's delay 
         pygame.time.delay(delay)
+
+        screen.fill((0, 0, 0))
 
         #start_time updates as long as snake doensn't leave (i.e. move)
         if x_player == 1*gridSize and y_player == 1*gridSize:
@@ -301,12 +349,21 @@ def snake_game():
         #         or y_player < 0 or y_player > screenHeight - gridSize):
         #     how_snake_die()
 
+        while (len(bodies) > tail_length):
+            del (bodies[0])
+        #draw the body
+        for body in bodies :
+            pygame.draw.rect(screen, colordict['white'], (body[0], body[1], gridSize, gridSize))
+
 
         if dict_level['level1'] == True:
             level_1()
 
         if dict_level['level2'] == True:
             level_2()
+
+        if dict_level['level3'] == True:
+            level_3()
 
         if next_level_unlocked == True:
             generate_slowpill = False
@@ -327,17 +384,12 @@ def snake_game():
             if generate_food == True and (x_player, y_player) == (x_food, y_food):
                 isEaten = True
                 tail_length += 1
+                total_score += 1
 
             if generate_slowpill == True and (x_player, y_player) == (x_slowpill, y_slowpill):
                 isEaten_slowpill = True
                 delay += game_speed*5 #set speed back to the start
                 score_now = tail_length
-
-
-        while (len(bodies) > tail_length):
-            del (bodies[0])
-              
-        screen.fill((0, 0, 0))
 
 
         #draw obstacle
@@ -352,12 +404,9 @@ def snake_game():
         if generate_slowpill == True:
             pygame.draw.rect(screen,colordict['red'],(x_slowpill,y_slowpill,gridSize,gridSize))
 
-        #draw the body
-        for body in bodies :
-            pygame.draw.rect(screen, colordict['white'], (body[0], body[1], gridSize, gridSize))
 
         font = pygame.font.SysFont("None", 30)
-        textScore = font.render("Score: {}".format(tail_length - 1), True, (100, 100, 100))
+        textScore = font.render("Score: {}".format(total_score), True, (100, 100, 100))
         screen.blit(textScore, (10, 10))
         
         font = pygame.font.SysFont('Calibri', 30)
