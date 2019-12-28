@@ -8,8 +8,8 @@ def main():
     x_food,y_food,x_player,y_player,bodies,tail_length,isGame,isEaten_food,\
     isEaten_slowpill,generate_slowpill,colordict,next_level_unlocked,\
     generate_food, l_obs_x,l_obs_y,l_obs_w,l_obs_h,dict_level,total_score,obstacle_index,\
-    moving_obs_y_1,moving_obs_y_2,moving_obstacle,bullet_pos_n_dir,game_finish,\
-    isEaten_ammunition,generate_ammunition,ammunition_count,snakey
+    moving_obs_y_1,moving_obs_y_2,moving_obstacle,bullet_pos_n_dir,\
+    isEaten_ammunition,generate_ammunition,ammunition_count,snakey,ticks
     
     pygame.init()
 
@@ -50,7 +50,7 @@ def main():
     # mov_x,mov_y,mov_w,mov_h = 0,0,0,0
     moving_obs_y_1,moving_obs_y_2 = 0,0
     bullet_pos_n_dir = dict()
-    game_finish = False
+    ticks = 0 #total loop counts
 
     snakey = AISnake(pos=(screenWidth-gridSize,(screenHeight/gridSize-1)//2*gridSize),length=10)
 
@@ -106,7 +106,7 @@ def pause():
         pygame.display.flip()
 
 
-def how_snake_die():
+def game_finished():
     global tail_length, screen, delay, isGame, colordict
     time.sleep(2)
     screen.fill(colordict['black'])
@@ -137,13 +137,13 @@ def obstacle(x,y,w,h,index):
     #die if snake touches obstacles
     if (x*gridSize < (x_player*2+gridSize)/2 < (x+w)*gridSize 
         and y*gridSize < (y_player*2+gridSize)/2 < (y+h)*gridSize):
-        how_snake_die()
+        game_finished()
 
-    #body touch obstacle
+    #die if "bodies" touch obstacle
     for body in bodies:
         if (x*gridSize < (body[0]*2+gridSize)/2 < (x+w)*gridSize 
             and y*gridSize < (body[1]*2+gridSize)/2 < (y+h)*gridSize):
-            how_snake_die()    
+            game_finished()    
 
     # obs_x,obs_y,obs_w,obs_h = x,y,w,h
     if len(l_obs_x) <= index:
@@ -249,27 +249,30 @@ def level_4():
     """level 4 - meet boss"""
     global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
     screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common,obstacle_index,\
-    keys,x_ammunition,y_ammunition,snakey
-    if game_finish == True: #score = 10
-        next_level_unlocked = True
-    else:
-        next_level_unlocked = False
+    keys,x_ammunition,y_ammunition,snakey,ticks
+    # if game_finished == True: #score = 10
+    #     next_level_unlocked = True
+    # else:
+    next_level_unlocked = False
 
-        #press space to shoot
-        if keys[pygame.K_SPACE]:
-            bullet()
-        if len(bullet_pos_n_dir) != 0:
-            bullet_move()
+    #press space to shoot
+    if keys[pygame.K_SPACE]:
+        bullet()
+    if len(bullet_pos_n_dir) != 0:
+        bullet_move()
 
-        
+    if ticks%3 == 0:
         snakey.direction()
         # print(bool(-1 <= (y_player-snakey.y)/(x_player-snakey.x) <= 1 and x_player < snakey.x))
-        print(snakey.direction())
+        # print(snakey.direction())
+        # print(ticks)
         snakey.update_pos()
-        snakey.draw_bodies()
-
-
-
+        snakey.update_bodies()
+    snakey.bodies_correction()
+    snakey.draw_bodies()
+    snakey.lose_health()
+    snakey.if_die() #then game over
+    # print(snakey.length)
 
     level_common(level_4,level_5)
 
@@ -379,21 +382,13 @@ def generate_ammunition_pos():
 
 
 class AISnake:
-    global x_player,y_player,velocity
+    global x_player,y_player,velocity,ticks,bullet_pos_n_dir,total_score
     def __init__(self,pos,length):
         self.x = pos[0]
         self.y = pos[1]
         self.bodies = [(self.x + (length+1-i)*gridSize, self.y) for i in range(length)] #head pos is the last ones in list]
         self.length = length
-        # if self.direction() != None:
-        #     self.preeeee = self.direction()
-        # print('j')
-    # def pre_direction(self):
-    #     # if self.direction() != None:
-    #     #     preeeee = self.direction()
-    #     return self.preeeee
-    #     # else:
-        #     pass
+
     def direction(self):
         # if self.x%gridSize == 0 and self.y%gridSize == 0:
         if (y_player-self.y) != 0 and (x_player-self.x) != 0:
@@ -421,7 +416,7 @@ class AISnake:
     def update_pos(self):
         k = 1 # k = speed multiplier
         # print(self.x)
-
+        
         if self.direction() == 'left':
             self.x -= k*velocity
             # print(k*velocity, self.x)
@@ -432,16 +427,31 @@ class AISnake:
             self.y -= k*velocity
         elif self.direction() == 'down':
             self.y += k*velocity
+    def update_bodies(self):
+        self.bodies.append((self.x,self.y))
+    def bodies_correction(self):
+        ''' make the AI snake be in correct length'''
+        while len(self.bodies) > self.length:
+            del self.bodies[0]
 
     def draw_bodies(self):
-        self.bodies.append((self.x,self.y))
-        if len(self.bodies) > self.length:
-            del self.bodies[0]
+        '''draw the AI snake'''
         for body in self.bodies :
             pygame.draw.rect(screen, colordict['purple'], (body[0], body[1], gridSize, gridSize))
         # print('sss')
-
-        
+    def lose_health(self):
+        '''lose health(length) when hit by fireball(bullet)'''
+        for pos in list(bullet_pos_n_dir.keys()):
+            for body in self.bodies:
+                if (body[0] < pos[0]+gridSize/2 < body[0]+gridSize
+                    and body[1] < pos[1]+gridSize/2 < body[1]+gridSize):
+                    self.length -= 1
+                    print('yeah')
+                    total_score += 2
+                    del bullet_pos_n_dir[pos]
+    def if_die(self):
+        if self.length == 0:
+            game_finished()
 
 #Game Loop
 def snake_game():
@@ -451,9 +461,11 @@ def snake_game():
     delay, tail_length, screen, isGame, isEaten_food, colordict, next_level_unlocked,\
     generate_food, next_level_unlocked,l_obs_x,l_obs_y,l_obs_w,l_obs_h,level_1,level_2,\
     total_score,obstacle_index,bullet_pos_n_dir,up,down,right,left,velocity,keys,\
-    isEaten_ammunition,generate_ammunition,x_ammunition, y_ammunition,ammunition_count
+    isEaten_ammunition,generate_ammunition,x_ammunition, y_ammunition,ammunition_count,\
+    ticks
     
     screen = pygame.display.set_mode((screenWidth, screenHeight))
+
     velocity = gridSize
     up = False
     down = False
@@ -463,8 +475,12 @@ def snake_game():
     score_now = 0 #for determining the generate slowpill threshold
 
     while isGame :
+        ticks += 1
+
         #Game's delay 
         pygame.time.delay(delay)
+
+
 
         screen.fill((0, 0, 0))
 
@@ -477,7 +493,7 @@ def snake_game():
             #die if snake's head touches its body
             for body in bodies :
                 if x_player == body[0] and y_player == body[1] :
-                    how_snake_die()
+                    game_finished()
                     
        #to let the game close 
         for event in pygame.event.get():
@@ -514,7 +530,7 @@ def snake_game():
         #when touches boundary
         # if (x_player < 0 or x_player > screenWidth - gridSize 
         #         or y_player < 0 or y_player > screenHeight - gridSize):
-        #     how_snake_die()
+        #     game_finished()
 
         while (len(bodies) > tail_length):
             del (bodies[0])
