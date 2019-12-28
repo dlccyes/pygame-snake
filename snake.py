@@ -5,10 +5,12 @@ import time
 
 def main():
     global screenWidth,screenHeight,game_speed,gridSize,delay,\
-    x_food,y_food,x_player,y_player,bodies,tail_length,isGame,isEaten,\
+    x_food,y_food,x_player,y_player,bodies,tail_length,isGame,isEaten_food,\
     isEaten_slowpill,generate_slowpill,colordict,next_level_unlocked,\
     generate_food, l_obs_x,l_obs_y,l_obs_w,l_obs_h,dict_level,total_score,obstacle_index,\
-    moving_obs_y_1,moving_obs_y_2,moving_obstacle
+    moving_obs_y_1,moving_obs_y_2,moving_obstacle,bullet_pos_n_dir,game_finish,\
+    isEaten_ammunition,generate_ammunition,ammunition_count
+    
     pygame.init()
 
     screenWidth = 1080
@@ -19,26 +21,36 @@ def main():
     game_speed = 5
     gridSize = 40
     delay = 140
-    x_food = 0 #food's x pos
-    y_food = 0 #food's y pos
     x_player = 1*gridSize #snake's head's x pos
     y_player = 1*gridSize #snake's head's y pos
     bodies = list()
     tail_length = 1
     isGame = True
-    isEaten = True
+    #food
+    x_food = 0 #food's x pos
+    y_food = 0 #food's y pos
+    isEaten_food = True
+    generate_food = True
+    #slowpill
     isEaten_slowpill = True
     generate_slowpill = False
-    generate_food = True
+    #ammunition
+    isEaten_ammunition = True
+    generate_ammunition = True
+    ammunition_count = 0
+
     next_level_unlocked = False
     l_obs_x,l_obs_y,l_obs_w,l_obs_h = [],[],[],[]
-    dict_level={'level1':True,'level2':False,'level3':False}
+    dict_level={'level1':True,'level2':False,'level3':False, 'level4':False}
     colordict = {'yellow':(255,255,0),'blue':(54,135,255),'black':(0,0,0),\
-    'white':(255,255,255),'pink':(255,131,239),'red':(255,0,0)}
+    'white':(255,255,255),'pink':(255,131,239),'red':(255,0,0),'orange':(246,169,27),\
+    'green':(94,203,46)}
     total_score = 0
     obstacle_index = dict()
     # mov_x,mov_y,mov_w,mov_h = 0,0,0,0
     moving_obs_y_1,moving_obs_y_2 = 0,0
+    bullet_pos_n_dir = dict()
+    game_finish = False
 
     snake_game()
 
@@ -166,6 +178,7 @@ def generate_food_pos():
 
 #same as a food except speed set back to default when eaten
 def generate_slowpill_pos():
+    '''a pill that make u move slower'''
     global x_slowpill, y_slowpill, bodies, screenWidth, screenHeight, gridSize,\
     l_obs_x,l_obs_y,l_obs_w,l_obs_h
     x_slowpill = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize #grid num * grid size
@@ -206,13 +219,15 @@ def level_2():
     level_common(level_2,level_3)
 
 def level_3():
-    """level 3 of the game"""
+    """level 3 - falling obstacles"""
     global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
     screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common,obstacle_index,\
     moving_obs_y_1,moving_obs_y_2,moving_obstacle
 
-    if tail_length == 15: #score = 10
+    if tail_length == 2: #score = 10
         next_level_unlocked = True
+        obstacle(0,0,0,0,obstacle_index['level3_moving_obstacle_1'])
+        obstacle(0,0,0,0,obstacle_index['level3_moving_obstacle_2'])
     else:
         next_level_unlocked = False
         moving_obs_y_1 += 1
@@ -226,12 +241,34 @@ def level_3():
         if moving_obs_y_2 >= screenHeight/gridSize:
             moving_obs_y_2 = 0
     
-
     level_common(level_3,level_4)
 
 def level_4():
-    pass
+    """level 4 - meet boss"""
+    global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
+    screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common,obstacle_index,\
+    keys,x_ammunition,y_ammunition
+    if game_finish == True: #score = 10
+        next_level_unlocked = True
+    else:
+        next_level_unlocked = False
 
+
+
+        #press space to shoot
+        if keys[pygame.K_SPACE]:
+            bullet()
+        if len(bullet_pos_n_dir) != 0:
+            bullet_move()
+
+
+
+
+    level_common(level_4,level_5)
+
+def level_5(): #end_game
+    ''' the end of the game persumably'''
+    pass
 
 def level_common(level,next_level):
     global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
@@ -251,23 +288,23 @@ def level_common(level,next_level):
     obstacle_index['right_bottom_bar'] = 5
     obstacle(0,0,screenWidth/gridSize,1,obstacle_index['top_bar']) #top bar
     obstacle(0,screenHeight/gridSize-1,screenWidth/gridSize,1,obstacle_index['bottom_bar']) #bottom bar
-    obstacle(0,0,1,(screenHeight/gridSize-1)/2,obstacle_index['left_top_bar']) #left top bar
-    obstacle(0,(screenHeight/gridSize-1)/2+1,1,(screenHeight/gridSize-1)/2,obstacle_index['left_bottom_bar']) #left bottom bar
-    obstacle(screenWidth/gridSize-1,0,1,(screenHeight/gridSize-1)/2,obstacle_index['right_top_bar']) #right top bar
-    obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)/2+1,1,(screenHeight/gridSize-1)/2,obstacle_index['right_bottom_bar']) #right bottom bar
+    obstacle(0,0,1,(screenHeight/gridSize-1)//2,obstacle_index['left_top_bar']) #left top bar
+    obstacle(0,(screenHeight/gridSize-1)//2+1,1,(screenHeight/gridSize-1)//2,obstacle_index['left_bottom_bar']) #left bottom bar
+    obstacle(screenWidth/gridSize-1,0,1,(screenHeight/gridSize-1)//2,obstacle_index['right_top_bar']) #right top bar
+    obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)//2+1,1,(screenHeight/gridSize-1)//2,obstacle_index['right_bottom_bar']) #right bottom bar
 
     if next_level_unlocked == False:
         generate_food = True
         obstacle_index['right_middle_block'] = 6
-        obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)/2,1,1,obstacle_index['right_middle_block']) #right middle block
+        obstacle(screenWidth/gridSize-1,(screenHeight/gridSize-1)//2,1,1,obstacle_index['right_middle_block']) #right middle block
         if level == level_1:
             obstacle_index['left_middle_block'] = 7
-            obstacle(0,(screenHeight/gridSize-1)/2,1,1,obstacle_index['left_middle_block']) #left middle block
+            obstacle(0,(screenHeight/gridSize-1)//2,1,1,obstacle_index['left_middle_block']) #left middle block
 
     elif next_level_unlocked == True:
         obstacle(0,0,0,0,obstacle_index['right_middle_block']) #open a "hole" on the right parameter
-        if x_player+gridSize/2 >= screenWidth-gridSize and (screenHeight-gridSize)/2 < y_player+gridSize/2 < (screenHeight-gridSize)/2+gridSize:
-
+        if x_player+gridSize/2 >= screenWidth-gridSize and (screenHeight-gridSize)//2 < y_player+gridSize/2 < (screenHeight-gridSize)//2+gridSize:
+        # if x_player == screenWidth/gridSize-1 and y_player == (screenHeight/gridSize-1)/2:
             tail_length = 1
             #snake goes into the hole then appears on the left
             x_player,y_player = 1*gridSize,(screenHeight-gridSize)/2
@@ -277,14 +314,72 @@ def level_common(level,next_level):
             delay = 140
             next_level()
 
+def bullet():
+    '''bullet in level 4'''
+    global x_player,y_player,left,right,up,down,bullet_pos_n_dir,ammunition_count
+    
+    # new_bullet_x,new_bullet_y = x_player,y_player
+    if ammunition_count > 0:
+        if up:
+            bullet_pos_n_dir[(x_player,y_player)] = 'up'
+        elif down:
+            bullet_pos_n_dir[(x_player,y_player)] = 'down'
+        elif left:
+            bullet_pos_n_dir[(x_player,y_player)] = 'left'
+        elif right:
+            bullet_pos_n_dir[(x_player,y_player)] = 'right'
+        ammunition_count -= 1
+
+def bullet_move():
+    '''how bullets move'''
+    global bullet_pos_n_dir,velocity
+
+    for pos in list(bullet_pos_n_dir.keys()):
+        temp_pos = [pos[0],pos[1]] #bc tuple can't change value
+        k = 1.2 #bullet speed multiplier
+        if bullet_pos_n_dir[pos] == 'up':
+            temp_pos[1] -= k*velocity
+        elif bullet_pos_n_dir[pos] == 'down':
+            temp_pos[1] += k*velocity
+        elif bullet_pos_n_dir[pos] == 'left':
+            temp_pos[0] -= k*velocity
+        elif bullet_pos_n_dir[pos] == 'right':
+            temp_pos[0] += k*velocity
+
+        #update new pos back to tuple replacing original tuple in dict
+        bullet_pos_n_dir[tuple(temp_pos)] = bullet_pos_n_dir.pop(pos)
+
+    #delete bullet when out of boundary
+    for pos in list(bullet_pos_n_dir.keys()):
+        if (not 0 < pos[0] < screenWidth-gridSize 
+            or not 0 < pos[1] < screenHeight-gridSize):
+            del bullet_pos_n_dir[pos]
+
+def generate_ammunition_pos():
+    '''ammunition'''
+    global x_ammunition, y_ammunition, bodies, screenWidth, screenHeight, gridSize,\
+    l_obs_x,l_obs_y,l_obs_w,l_obs_h
+    x_ammunition = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize #grid num * grid size
+    y_ammunition = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
+
+    for obs_x,obs_y,obs_w,obs_h in zip(l_obs_x,l_obs_y,l_obs_w,l_obs_h):
+        while ((x_ammunition, y_ammunition) in bodies
+            or obs_x*gridSize < (x_ammunition*2+gridSize)/2 < (obs_x+obs_w)*gridSize 
+             and obs_y*gridSize < (y_ammunition*2+gridSize)/2 < (obs_y+obs_h)*gridSize):
+            x_ammunition = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize
+            y_ammunition = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
+    return x_ammunition, y_ammunition
+
 
 #Game Loop
 def snake_game():
+    '''game loop'''
     global generate_slowpill,x_slowpill,y_slowpill,isEaten_slowpill, game_speed,\
     x_food, y_food, x_player, y_player, gridSize, screenWidth, screenHeight, bodies,\
-    delay, tail_length, screen, isGame, isEaten, colordict, next_level_unlocked,\
+    delay, tail_length, screen, isGame, isEaten_food, colordict, next_level_unlocked,\
     generate_food, next_level_unlocked,l_obs_x,l_obs_y,l_obs_w,l_obs_h,level_1,level_2,\
-    total_score,obstacle_index
+    total_score,obstacle_index,bullet_pos_n_dir,up,down,right,left,velocity,keys,\
+    isEaten_ammunition,generate_ammunition,x_ammunition, y_ammunition,ammunition_count
     
     screen = pygame.display.set_mode((screenWidth, screenHeight))
     velocity = gridSize
@@ -355,25 +450,34 @@ def snake_game():
         for body in bodies :
             pygame.draw.rect(screen, colordict['white'], (body[0], body[1], gridSize, gridSize))
 
+        # for circle area game
+        # pygame.draw.line(screen,colordict['blue'],(5*gridSize,1.5*gridSize),(8*gridSize,1.5*gridSize),gridSize)
 
         if dict_level['level1'] == True:
             level_1()
-
         if dict_level['level2'] == True:
             level_2()
-
         if dict_level['level3'] == True:
             level_3()
+        if dict_level['level4'] == True:
+            level_4()
 
         if next_level_unlocked == True:
             generate_slowpill = False
             generate_food = False
         elif next_level_unlocked == False:
-            if isEaten:
+            #food
+            if isEaten_food == True:
                 x_food, y_food = generate_food_pos()
-                isEaten = False
+                isEaten_food = False
                 delay -= game_speed
 
+            if generate_food == True and (x_player, y_player) == (x_food, y_food):
+                isEaten_food = True
+                tail_length += 1
+                total_score += 1
+
+            #slowpill
             if isEaten_slowpill == True and delay < 120 - score_now:
                 x_slowpill, y_slowpill = generate_slowpill_pos()
                 isEaten_slowpill = False
@@ -381,16 +485,29 @@ def snake_game():
             elif isEaten_slowpill == True and delay >= 100:
                 generate_slowpill = False
                 
-            if generate_food == True and (x_player, y_player) == (x_food, y_food):
-                isEaten = True
-                tail_length += 1
-                total_score += 1
-
             if generate_slowpill == True and (x_player, y_player) == (x_slowpill, y_slowpill):
                 isEaten_slowpill = True
                 delay += game_speed*5 #set speed back to the start
                 score_now = tail_length
 
+            #ammunition
+            if dict_level['level4'] == True:
+                if isEaten_ammunition:         
+                    x_ammunition,y_ammunition = generate_ammunition_pos()
+                    isEaten_ammunition = False
+
+                if generate_ammunition == True and (x_player, y_player) == (x_ammunition, y_ammunition):
+                    isEaten_ammunition = True
+                    ammunition_count += 1
+                #draw ammunition
+                if generate_ammunition == True:
+                    pygame.draw.rect(screen,colordict['green'],(x_ammunition,y_ammunition,gridSize,gridSize))
+
+
+
+        #draw bullets
+        for pos in list(bullet_pos_n_dir.keys()):
+            pygame.draw.rect(screen,colordict['orange'],(pos[0],pos[1],gridSize,gridSize))
 
         #draw obstacle
         for obs_x,obs_y,obs_w,obs_h in zip(l_obs_x,l_obs_y,l_obs_w,l_obs_h):
@@ -404,6 +521,7 @@ def snake_game():
         if generate_slowpill == True:
             pygame.draw.rect(screen,colordict['red'],(x_slowpill,y_slowpill,gridSize,gridSize))
 
+        
 
         font = pygame.font.SysFont("None", 30)
         textScore = font.render("Score: {}".format(total_score), True, (100, 100, 100))
