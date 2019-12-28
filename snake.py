@@ -9,7 +9,7 @@ def main():
     isEaten_slowpill,generate_slowpill,colordict,next_level_unlocked,\
     generate_food, l_obs_x,l_obs_y,l_obs_w,l_obs_h,dict_level,total_score,obstacle_index,\
     moving_obs_y_1,moving_obs_y_2,moving_obstacle,bullet_pos_n_dir,game_finish,\
-    isEaten_ammunition,generate_ammunition,ammunition_count
+    isEaten_ammunition,generate_ammunition,ammunition_count,snakey
     
     pygame.init()
 
@@ -44,13 +44,15 @@ def main():
     dict_level={'level1':True,'level2':False,'level3':False, 'level4':False}
     colordict = {'yellow':(255,255,0),'blue':(54,135,255),'black':(0,0,0),\
     'white':(255,255,255),'pink':(255,131,239),'red':(255,0,0),'orange':(246,169,27),\
-    'green':(94,203,46)}
+    'green':(94,203,46),'purple':(204,0,182)}
     total_score = 0
     obstacle_index = dict()
     # mov_x,mov_y,mov_w,mov_h = 0,0,0,0
     moving_obs_y_1,moving_obs_y_2 = 0,0
     bullet_pos_n_dir = dict()
     game_finish = False
+
+    snakey = AISnake(pos=(screenWidth-gridSize,(screenHeight/gridSize-1)//2*gridSize),length=10)
 
     snake_game()
 
@@ -247,19 +249,24 @@ def level_4():
     """level 4 - meet boss"""
     global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
     screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common,obstacle_index,\
-    keys,x_ammunition,y_ammunition
+    keys,x_ammunition,y_ammunition,snakey
     if game_finish == True: #score = 10
         next_level_unlocked = True
     else:
         next_level_unlocked = False
-
-
 
         #press space to shoot
         if keys[pygame.K_SPACE]:
             bullet()
         if len(bullet_pos_n_dir) != 0:
             bullet_move()
+
+        
+        snakey.direction()
+        # print(bool(-1 <= (y_player-snakey.y)/(x_player-snakey.x) <= 1 and x_player < snakey.x))
+        print(snakey.direction())
+        snakey.update_pos()
+        snakey.draw_bodies()
 
 
 
@@ -371,6 +378,71 @@ def generate_ammunition_pos():
     return x_ammunition, y_ammunition
 
 
+class AISnake:
+    global x_player,y_player,velocity
+    def __init__(self,pos,length):
+        self.x = pos[0]
+        self.y = pos[1]
+        self.bodies = [(self.x + (length+1-i)*gridSize, self.y) for i in range(length)] #head pos is the last ones in list]
+        self.length = length
+        # if self.direction() != None:
+        #     self.preeeee = self.direction()
+        # print('j')
+    # def pre_direction(self):
+    #     # if self.direction() != None:
+    #     #     preeeee = self.direction()
+    #     return self.preeeee
+    #     # else:
+        #     pass
+    def direction(self):
+        # if self.x%gridSize == 0 and self.y%gridSize == 0:
+        if (y_player-self.y) != 0 and (x_player-self.x) != 0:
+            if -1 <= (y_player-self.y)/(x_player-self.x) <= 1 and x_player < self.x:
+                # print('jj')
+                return 'left'
+            elif -1 <= (y_player-self.y)/(x_player-self.x) <= 1 and x_player > self.x:
+                return 'right'
+            elif y_player < self.y:
+                return 'up'
+            elif y_player > self.y:
+                return 'down'
+        elif x_player-self.x == 0:
+            if y_player < self.y:
+                return 'up'
+            elif y_player > self.y:
+                return 'down'
+        elif y_player-self.y == 0:
+            if x_player < self.x:
+                return 'left'
+            elif x_player > self.x:
+                return 'right'
+
+
+    def update_pos(self):
+        k = 1 # k = speed multiplier
+        # print(self.x)
+
+        if self.direction() == 'left':
+            self.x -= k*velocity
+            # print(k*velocity, self.x)
+            # print('ccc')
+        elif self.direction() == 'right':
+            self.x += k*velocity
+        elif self.direction() == 'up':
+            self.y -= k*velocity
+        elif self.direction() == 'down':
+            self.y += k*velocity
+
+    def draw_bodies(self):
+        self.bodies.append((self.x,self.y))
+        if len(self.bodies) > self.length:
+            del self.bodies[0]
+        for body in self.bodies :
+            pygame.draw.rect(screen, colordict['purple'], (body[0], body[1], gridSize, gridSize))
+        # print('sss')
+
+        
+
 #Game Loop
 def snake_game():
     '''game loop'''
@@ -452,6 +524,7 @@ def snake_game():
 
         # for circle area game
         # pygame.draw.line(screen,colordict['blue'],(5*gridSize,1.5*gridSize),(8*gridSize,1.5*gridSize),gridSize)
+        # print(bodies)
 
         if dict_level['level1'] == True:
             level_1()
@@ -509,17 +582,26 @@ def snake_game():
 
 
 
-        #draw bullets
+        #draw fireballs(bullets)
+        fireball_image = pygame.image.load('fireball.png')
+        fireball_image = pygame.transform.scale(fireball_image,(50,50))
+        fireball_image.convert()
         for pos in list(bullet_pos_n_dir):
-            pygame.draw.rect(screen,colordict['orange'],(pos[0],pos[1],gridSize,gridSize))
+            screen.blit(fireball_image,(pos[0],pos[1]))
+            # pygame.draw.rect(screen,colordict['orange'],(pos[0],pos[1],gridSize,gridSize))
 
         #draw obstacle
         for obs_x,obs_y,obs_w,obs_h in zip(l_obs_x,l_obs_y,l_obs_w,l_obs_h):
             pygame.draw.rect(screen,colordict['blue'],(obs_x*gridSize,obs_y*gridSize,obs_w*gridSize,obs_h*gridSize))
         
         #draw food
+        # snake_food_image = pygame.image.load('snake_food.gif')
+        # snake_food_image = pygame.transform.scale(snake_food_image,(40,40))
+        # snake_food_image.convert()
         if generate_food == True:
+            # screen.blit(snake_food_image,(x_food,y_food))
             pygame.draw.rect(screen,colordict['yellow'], (x_food, y_food, gridSize, gridSize))
+            # pygame.draw.circle(screen,colordict['yellow'], (x_food+gridSize//2,y_food+gridSize//2),gridSize//3)
 
         #draw slowpill
         if generate_slowpill == True:
