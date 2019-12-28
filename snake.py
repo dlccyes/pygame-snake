@@ -499,14 +499,18 @@ def snake_game():
                 if generate_ammunition == True and (x_player, y_player) == (x_ammunition, y_ammunition):
                     isEaten_ammunition = True
                     ammunition_count += 1
+                    if ammunition_count >= 3:
+                        ammunition_count = 3
                 #draw ammunition
                 if generate_ammunition == True:
                     pygame.draw.rect(screen,colordict['green'],(x_ammunition,y_ammunition,gridSize,gridSize))
 
 
 
+
+
         #draw bullets
-        for pos in list(bullet_pos_n_dir.keys()):
+        for pos in list(bullet_pos_n_dir):
             pygame.draw.rect(screen,colordict['orange'],(pos[0],pos[1],gridSize,gridSize))
 
         #draw obstacle
@@ -524,13 +528,25 @@ def snake_game():
         
 
         font = pygame.font.SysFont("None", 30)
-        textScore = font.render("Score: {}".format(total_score), True, (100, 100, 100))
+        textScore = font.render("Score: {}".format(total_score), True, colordict['black'])
         screen.blit(textScore, (10, 10))
         
         font = pygame.font.SysFont('Calibri', 30)
         time_text = font.render('time: %ss'%str(game_time//1000), True, (255, 0, 0))
         screen.blit(time_text, (100,100))
         # pygame.display.flip()
+
+        if dict_level['level4'] == True:
+            #draw bullet image
+            bullet_image = pygame.image.load('bullet.png')
+            bullet_image = pygame.transform.scale(bullet_image,(55,40))
+            bullet_image.convert()
+            if ammunition_count >= 1:
+                screen.blit(bullet_image,(100,3))
+            if ammunition_count >= 2:
+                screen.blit(bullet_image,(120,3))
+            if ammunition_count == 3:
+                screen.blit(bullet_image,(140,3))
 
         #update the screen
         pygame.display.update()
