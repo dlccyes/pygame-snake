@@ -273,7 +273,7 @@ def level_4():
     snakey.lose_health()
     snakey.if_die() #then game over
     # print(snakey.length)
-    if snakey.length <= 8:
+    if snakey.length <= 5:
         snakey.rage_mode()
 
     level_common(level_4,level_5)
@@ -456,48 +456,28 @@ class AISnake:
         if self.length == 0:
             game_finished()
     def rage_mode(self):
+        global s,t
+        if self.bodies[0][0] > self.x and self.bodies[0][1] == self.y: #3 o'clock
+            s,t = 1,-1
+        elif self.bodies[0][0] > self.x and self.bodies[0][1] < self.y: #1.5 o'clock
+            s,t =  0,-1
+        elif self.bodies[0][0] == self.x and self.bodies[0][1] < self.y: #12 o'clock
+            s,t =  -1,-1
+        elif self.bodies[0][0] < self.x and self.bodies[0][1] < self.y: #10.5 o'clock
+            s,t =  -1,0
+        elif self.bodies[0][0] < self.x and self.bodies[0][1] == self.y: #9 o'clock
+            s,t =  -1,1
+        elif self.bodies[0][0] < self.x and self.bodies[0][1] > self.y: #7.5 o'clock
+            s,t =  0,1
+        elif self.bodies[0][0] == self.x and self.bodies[0][1] > self.y: #6 o'clock
+            s,t =  1,1
+        elif self.bodies[0][0] > self.x and self.bodies[0][1] > self.y: #4.5 o'clock
+            s,t =  1,0
         for i in range(len(self.bodies)):
             j = len(self.bodies) - (i+1)
-            if self.bodies[0][0] > self.x and self.bodies[0][1] == self.y: #3 o'clock
-                s,t = 1,-1
-            elif self.bodies[0][0] > self.x and self.bodies[0][1] < self.y: #1.5 o'clock
-                s,t =  0,-1
-            elif self.bodies[0][0] == self.x and self.bodies[0][1] < self.y: #12 o'clock
-                s,t =  -1,-1
-            elif self.bodies[0][0] < self.x and self.bodies[0][1] < self.y: #10.5 o'clock
-                s,t =  -1,0
-            elif self.bodies[0][0] < self.x and self.bodies[0][1] == self.y: #9 o'clock
-                s,t =  -1,1
-            elif self.bodies[0][0] < self.x and self.bodies[0][1] > self.y: #7.5 o'clock
-                s,t =  0,1
-            elif self.bodies[0][0] == self.x and self.bodies[0][1] > self.y: #6 o'clock
-                s,t =  1,1
-            elif self.bodies[0][0] > self.x and self.bodies[0][1] > self.y: #4.5 o'clock
-                s,t =  1,0
-            self.bodies[i][0] = self.bodies[-1][0] + s*j*gridSize
-            self.bodies[i][1] = self.bodies[-1][1] + t*j*gridSize
-
-        # prev = game_time//125
-        # if game_time//125 != prev: #every 1/8s
-        # for i in range(len(self.bodies)):
-        #     j = len(self.bodies) - (i+1)
-        #     if self.bodies[i][0] > self.x and self.bodies[i][1] == self.y: #3 o'clock
-        #         self.bodies[i][1] -= j*gridSize
-        #     elif self.bodies[i][0] > self.x and self.bodies[i][1] < self.y: #1.5 o'clock
-        #         self.bodies[i][0] -= j*gridSize
-        #     elif self.bodies[i][0] == self.x and self.bodies[i][1] < self.y: #12 o'clock
-        #         self.bodies[i][0] -= j*gridSize
-        #     elif self.bodies[i][0] < self.x and self.bodies[i][1] < self.y: #10.5 o'clock
-        #         self.bodies[i][1] += j*gridSize
-        #     elif self.bodies[i][0] < self.x and self.bodies[i][1] == self.y: #9 o'clock
-        #         self.bodies[i][1] += j*gridSize
-        #     elif self.bodies[i][0] < self.x and self.bodies[i][1] > self.y: #7.5 o'clock
-        #         self.bodies[i][0] += j*gridSize
-        #     elif self.bodies[i][0] == self.x and self.bodies[i][1] > self.y: #6 o'clock
-        #         self.bodies[i][0] += j*gridSize
-        #     elif self.bodies[i][0] > self.x and self.bodies[i][1] > self.y: #4.5 o'clock
-        #         self.bodies[i][1] -= j*gridSize
-
+            self.bodies[i][0] = self.x + s*j*gridSize
+            self.bodies[i][1] = self.y + t*j*gridSize
+           
 #Game Loop
 def snake_game():
     '''game loop'''
