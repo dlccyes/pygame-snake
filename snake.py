@@ -2,6 +2,7 @@ import pygame
 import random
 import sys
 import time
+import tkinter as tk
 
 def main():
     global screenWidth,screenHeight,game_speed,gridSize,delay,\
@@ -15,7 +16,6 @@ def main():
 
     screenWidth = 1080
     screenHeight = 600
-
 
     #initial variable
     game_speed = 5
@@ -54,7 +54,26 @@ def main():
 
     snakey = AISnake(pos=(screenWidth-gridSize,(screenHeight/gridSize-1)//2*gridSize),length=10)
 
+    # menu()
+
     snake_game()
+
+def menu():
+    menuscreen = tk.Tk()
+    menuscreen.title('Snake')
+    menuscreen.geometry('1080x600')
+    menuscreen['bg'] = 'black'
+    quick_start = tk.Button(menuscreen,text='Quick Start',command=main)
+    quick_start.place(x=300,y=200,width=400,height=100)
+    quick_start['font'] = ('Arial',32)
+    quick_start['bg'] = 'black'
+    quick_start['fg'] = 'white'
+    quick_start['activebackground'] = quick_start['bg']
+    quick_start['activeforeground'] = quick_start['fg']
+    quick_start['bd'] = 0
+    quick_start['relief'] = 'sunken' 
+    menuscreen.mainloop()
+
 
 def button(unpressed_color, pressed_color,
     text, text_color, x_pos, y_pos, width, height, action = None):
@@ -81,8 +100,9 @@ def quit_game():
     pygame.quit()
 
 def pause():
-    global isGame,colordict,screen,mouse_pos
+    global isGame,colordict,screen,mouse_pos,colordict
     while isGame:
+        screen.fill(colordict['black'])
         # pygame.time.delay(delay)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -90,7 +110,7 @@ def pause():
         mouse_pos = pygame.mouse.get_pos()
         x_pos,y_pos,width,height=screenWidth/2-120/2,screenHeight/2-60/2,120,60
 
-        if (x_pos < mouse_pos[0] < x_pos + width 
+        if (x_pos < mouse_pos[0] < x_pos + width #click the button to resume
             and y_pos < mouse_pos[1] < y_pos + height):
             pygame.draw.rect(screen, colordict['pink'], (x_pos,y_pos,width,height))
             if pygame.mouse.get_pressed()[0] == 1:
@@ -104,7 +124,6 @@ def pause():
         button_text_rect.center = (x_pos+width/2 , y_pos+height/2)
         screen.blit(button_text, button_text_rect)
         pygame.display.flip()
-
 
 def game_finished():
     global tail_length, screen, delay, isGame, colordict
@@ -167,15 +186,16 @@ def generate_food_pos():
     global x_food, y_food, bodies, screenWidth, screenHeight, gridSize,\
     l_obs_x,l_obs_y,l_obs_w,l_obs_h
     x_food = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
-    y_food = random.randint(1, screenWidth/gridSize - 2) * gridSize # make it only generate in parameter
+    y_food = random.randint(1, screenHeight/gridSize - 2) * gridSize # make it only generate in parameter
 
     for obs_x,obs_y,obs_w,obs_h in zip(l_obs_x,l_obs_y,l_obs_w,l_obs_h):
         while ((x_food, y_food) in bodies
             or obs_x*gridSize < x_food+gridSize/2 < (obs_x+obs_w)*gridSize
             and obs_y*gridSize < y_food+gridSize/2 < (obs_y+obs_h)*gridSize):
             print('fucku')
-            x_food = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize
-            y_food = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
+            x_food = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
+            y_food = random.randint(1, screenHeight/gridSize - 2) * gridSize # make it only generate in parameter
+    # print(x_food,y_food)
     return x_food, y_food
 
 #same as a food except speed set back to default when eaten
@@ -184,14 +204,14 @@ def generate_slowpill_pos():
     global x_slowpill, y_slowpill, bodies, screenWidth, screenHeight, gridSize,\
     l_obs_x,l_obs_y,l_obs_w,l_obs_h
     x_slowpill = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
-    y_slowpill = random.randint(1, screenWidth/gridSize - 2) * gridSize # make it only generate in parameter
+    y_slowpill = random.randint(1, screenHeight/gridSize - 2) * gridSize # make it only generate in parameter
 
     for obs_x,obs_y,obs_w,obs_h in zip(l_obs_x,l_obs_y,l_obs_w,l_obs_h):
         while ((x_slowpill, y_slowpill) in bodies
             or obs_x*gridSize < (x_slowpill*2+gridSize)/2 < (obs_x+obs_w)*gridSize 
              and obs_y*gridSize < (y_slowpill*2+gridSize)/2 < (obs_y+obs_h)*gridSize):
-            x_slowpill = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize
-            y_slowpill = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
+            x_slowpill = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
+            y_slowpill = random.randint(1, screenHeight/gridSize - 2) * gridSize # make it only generate in parameter
     return x_slowpill, y_slowpill
 
 def level_1():
@@ -249,7 +269,7 @@ def level_4():
     """level 4 - meet boss"""
     global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
     screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common,obstacle_index,\
-    keys,x_ammunition,y_ammunition,snakey,ticks,total_score
+    keys,x_ammunition,y_ammunition,snakey,ticks,total_score,bodies
     # if game_finished == True: #score = 10
     #     next_level_unlocked = True
     # else:
@@ -261,11 +281,8 @@ def level_4():
     if len(bullet_pos_n_dir) != 0:
         bullet_move()
 
-    if ticks%3 == 0:
+    if ticks%3 == 0: #make the AI snake move slower
         snakey.direction()
-        # print(bool(-1 <= (y_player-snakey.y)/(x_player-snakey.x) <= 1 and x_player < snakey.x))
-        # print(snakey.direction())
-        # print(ticks)
         snakey.update_pos()
         snakey.update_bodies()
     snakey.bodies_correction()
@@ -275,6 +292,14 @@ def level_4():
     # print(snakey.length)
     if snakey.length <= 5:
         snakey.rage_mode()
+    # print(bodies,snakey.bodies)
+    for body in bodies:
+        for ai_body in snakey.bodies:
+            if (body[0] < ai_body[0]+gridSize/2 < body[0] + gridSize
+                and body[1] < ai_body[1]+gridSize/2 < body[1] + gridSize):
+                tail_length -= 1
+                print('shot!!')
+
 
     level_common(level_4,level_5)
 
@@ -320,6 +345,9 @@ def level_common(level,next_level):
             tail_length = 1
             #snake goes into the hole then appears on the left
             x_player,y_player = 1*gridSize,(screenHeight-gridSize)/2
+            bodies.append((x_player, y_player)) #to update to bodies immediately
+            while (len(bodies) > tail_length):
+                del bodies[0]
             if level == level_1:
                 obstacle(0,0,0,0,obstacle_index['left_middle_block']) #open a "hole" on the left parameter
 
@@ -372,14 +400,14 @@ def generate_ammunition_pos():
     global x_ammunition, y_ammunition, bodies, screenWidth, screenHeight, gridSize,\
     l_obs_x,l_obs_y,l_obs_w,l_obs_h
     x_ammunition = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
-    y_ammunition = random.randint(1, screenWidth/gridSize - 2) * gridSize # make it only generate in parameter
+    y_ammunition = random.randint(1, screenHeight/gridSize - 2) * gridSize # make it only generate in parameter
 
     for obs_x,obs_y,obs_w,obs_h in zip(l_obs_x,l_obs_y,l_obs_w,l_obs_h):
         while ((x_ammunition, y_ammunition) in bodies
             or obs_x*gridSize < (x_ammunition*2+gridSize)/2 < (obs_x+obs_w)*gridSize 
              and obs_y*gridSize < (y_ammunition*2+gridSize)/2 < (obs_y+obs_h)*gridSize):
-            x_ammunition = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize
-            y_ammunition = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
+            x_ammunition = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
+            y_ammunition = random.randint(1, screenHeight/gridSize - 2) * gridSize # make it only generate in parameter
     return x_ammunition, y_ammunition
 
 
@@ -390,12 +418,13 @@ class AISnake:
         self.y = pos[1]
         self.bodies = [(self.x + (length+1-i)*gridSize, self.y) for i in range(length)] #head pos is the last ones in list]
         self.length = length
+        # self.prev_direction = None
 
     def direction(self):
-        # if self.x%gridSize == 0 and self.y%gridSize == 0:
+        '''update direction'''
+        
         if (y_player-self.y) != 0 and (x_player-self.x) != 0:
             if -1 <= (y_player-self.y)/(x_player-self.x) <= 1 and x_player < self.x:
-                # print('jj')
                 return 'left'
             elif -1 <= (y_player-self.y)/(x_player-self.x) <= 1 and x_player > self.x:
                 return 'right'
@@ -414,23 +443,62 @@ class AISnake:
             elif x_player > self.x:
                 return 'right'
 
+        # if (y_player-self.y) != 0 and (x_player-self.x) != 0:
+        #     if (-1 <= (y_player-self.y)/(x_player-self.x) <= 1 and x_player < self.x
+        #         and self.prev_direction != 'right'):
+        #         self.prev_direction = 'left'
+        #         return 'left'
+        #     elif (-1 <= (y_player-self.y)/(x_player-self.x) <= 1 and x_player > self.x
+        #         and self.prev_direction != 'left'):
+        #         self.prev_direction = 'right'
+        #         return 'right'
+        #     elif y_player < self.y and self.prev_direction != 'down':
+        #         self.prev_direction = 'up'
+        #         return 'up'
+        #     elif y_player > self.y and self.prev_direction != 'up':
+        #         self.prev_direction = 'down'
+        #         return 'down'
+        #     else:
+        #         print('hmmm')
+        #         return self.prev_direction
+        # elif x_player-self.x == 0:
+        #     if y_player < self.y and self.prev_direction != 'down':
+        #         self.prev_direction = 'up'
+        #         return 'up'
+        #     elif y_player > self.y and self.prev_direction != 'up':
+        #         self.prev_direction = 'down'
+        #         return 'down'
+        #     else:
+        #         print('hmmm')
+        #         return self.prev_direction
+        # elif y_player-self.y == 0:
+        #     if x_player < self.x and self.prev_direction != 'right':
+        #         self.prev_direction = 'left'
+        #         return 'left'
+        #     elif x_player > self.x and self.prev_direction != 'left':
+        #         self.prev_direction = 'right'
+        #         return 'right'
+        #     else:
+        #         print('hmmm')
+        #         return self.prev_direction
 
     def update_pos(self):
+        '''update position'''
         k = 1 # k = speed multiplier
-        # print(self.x)
         
         if self.direction() == 'left':
             self.x -= k*velocity
-            # print(k*velocity, self.x)
-            # print('ccc')
         elif self.direction() == 'right':
             self.x += k*velocity
         elif self.direction() == 'up':
             self.y -= k*velocity
         elif self.direction() == 'down':
             self.y += k*velocity
+
     def update_bodies(self):
+        '''append bodies'''
         self.bodies.append([self.x,self.y])
+
     def bodies_correction(self):
         ''' make the AI snake be in correct length'''
         while len(self.bodies) > self.length:
@@ -440,7 +508,7 @@ class AISnake:
         '''draw the AI snake'''
         for body in self.bodies :
             pygame.draw.rect(screen, colordict['purple'], (body[0], body[1], gridSize, gridSize))
-        # print('sss')
+
     def lose_health(self):
         '''lose health(length) when hit by fireball(bullet)'''
         global total_score
@@ -452,10 +520,14 @@ class AISnake:
                     print('yeah')
                     total_score += 2
                     del bullet_pos_n_dir[pos]
+
     def if_die(self):
+        '''die'''
         if self.length == 0:
             game_finished()
+
     def rage_mode(self):
+        '''rage mode'''
         global s,t
         if self.bodies[0][0] > self.x and self.bodies[0][1] == self.y: #3 o'clock
             s,t = 1,-1
@@ -523,6 +595,9 @@ def snake_game():
             if event.type == pygame.QUIT:
                 isGame = False
 
+        if tail_length <= 0:
+            game_finished()
+
         if dict_level['level1'] == True:
             level_1()
         if dict_level['level2'] == True:
@@ -531,6 +606,8 @@ def snake_game():
             level_3()
         if dict_level['level4'] == True:
             level_4()
+
+
 
 
         bodies.append((x_player, y_player))
@@ -568,9 +645,10 @@ def snake_game():
         #     game_finished()
 
         # bodies.append((x_player, y_player))
-
+        # print(len(bodies))
         while (len(bodies) > tail_length):
-            del (bodies[0])
+            del bodies[0]
+
         #draw the body
         for body in bodies :
             pygame.draw.rect(screen, colordict['white'], (body[0], body[1], gridSize, gridSize))
@@ -657,6 +735,7 @@ def snake_game():
         if generate_food == True:
             # screen.blit(snake_food_image,(x_food,y_food))
             pygame.draw.rect(screen,colordict['yellow'], (x_food, y_food, gridSize, gridSize))
+            # print(x_food,y_food,'nice')
             # pygame.draw.circle(screen,colordict['yellow'], (x_food+gridSize//2,y_food+gridSize//2),gridSize//3)
 
         #draw slowpill
@@ -689,9 +768,6 @@ def snake_game():
         #update the screen
         pygame.display.update()
 
-
-
-
-
 if __name__ == '__main__':
-    main()
+    # main()
+    menu()
