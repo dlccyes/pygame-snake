@@ -166,13 +166,13 @@ def obstacle(x,y,w,h,index):
 def generate_food_pos():
     global x_food, y_food, bodies, screenWidth, screenHeight, gridSize,\
     l_obs_x,l_obs_y,l_obs_w,l_obs_h
-    x_food = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize #grid num * grid size
-    y_food = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
+    x_food = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
+    y_food = random.randint(1, screenWidth/gridSize - 2) * gridSize # make it only generate in parameter
 
     for obs_x,obs_y,obs_w,obs_h in zip(l_obs_x,l_obs_y,l_obs_w,l_obs_h):
         while ((x_food, y_food) in bodies
-            or obs_x*gridSize < (x_food*2+gridSize)/2 < (obs_x+obs_w)*gridSize
-            and obs_y*gridSize < (y_food*2+gridSize)/2 < (obs_y+obs_h)*gridSize):
+            or obs_x*gridSize < x_food+gridSize/2 < (obs_x+obs_w)*gridSize
+            and obs_y*gridSize < y_food+gridSize/2 < (obs_y+obs_h)*gridSize):
             print('fucku')
             x_food = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize
             y_food = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
@@ -183,8 +183,8 @@ def generate_slowpill_pos():
     '''a pill that make u move slower'''
     global x_slowpill, y_slowpill, bodies, screenWidth, screenHeight, gridSize,\
     l_obs_x,l_obs_y,l_obs_w,l_obs_h
-    x_slowpill = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize #grid num * grid size
-    y_slowpill = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
+    x_slowpill = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
+    y_slowpill = random.randint(1, screenWidth/gridSize - 2) * gridSize # make it only generate in parameter
 
     for obs_x,obs_y,obs_w,obs_h in zip(l_obs_x,l_obs_y,l_obs_w,l_obs_h):
         while ((x_slowpill, y_slowpill) in bodies
@@ -371,8 +371,8 @@ def generate_ammunition_pos():
     '''ammunition'''
     global x_ammunition, y_ammunition, bodies, screenWidth, screenHeight, gridSize,\
     l_obs_x,l_obs_y,l_obs_w,l_obs_h
-    x_ammunition = random.randint(0, (screenWidth - gridSize) / gridSize) * gridSize #grid num * grid size
-    y_ammunition = random.randint(0, (screenHeight - gridSize) / gridSize) * gridSize
+    x_ammunition = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
+    y_ammunition = random.randint(1, screenWidth/gridSize - 2) * gridSize # make it only generate in parameter
 
     for obs_x,obs_y,obs_w,obs_h in zip(l_obs_x,l_obs_y,l_obs_w,l_obs_h):
         while ((x_ammunition, y_ammunition) in bodies
@@ -523,6 +523,16 @@ def snake_game():
             if event.type == pygame.QUIT:
                 isGame = False
 
+        if dict_level['level1'] == True:
+            level_1()
+        if dict_level['level2'] == True:
+            level_2()
+        if dict_level['level3'] == True:
+            level_3()
+        if dict_level['level4'] == True:
+            level_4()
+
+
         bodies.append((x_player, y_player))
 
         keys = pygame.key.get_pressed()
@@ -541,6 +551,8 @@ def snake_game():
             right = True
             up = left = down = False
 
+        # bodies.append((x_player, y_player))
+
         if up :
             y_player -= velocity
         elif down :
@@ -555,6 +567,8 @@ def snake_game():
         #         or y_player < 0 or y_player > screenHeight - gridSize):
         #     game_finished()
 
+        # bodies.append((x_player, y_player))
+
         while (len(bodies) > tail_length):
             del (bodies[0])
         #draw the body
@@ -568,14 +582,14 @@ def snake_game():
         # pygame.draw.line(screen,colordict['blue'],(5*gridSize,1.5*gridSize),(8*gridSize,1.5*gridSize),gridSize)
         # print(bodies)
 
-        if dict_level['level1'] == True:
-            level_1()
-        if dict_level['level2'] == True:
-            level_2()
-        if dict_level['level3'] == True:
-            level_3()
-        if dict_level['level4'] == True:
-            level_4()
+        # if dict_level['level1'] == True:
+        #     level_1()
+        # if dict_level['level2'] == True:
+        #     level_2()
+        # if dict_level['level3'] == True:
+        #     level_3()
+        # if dict_level['level4'] == True:
+        #     level_4()
 
         if next_level_unlocked == True:
             generate_slowpill = False
@@ -674,6 +688,8 @@ def snake_game():
 
         #update the screen
         pygame.display.update()
+
+
 
 
 
