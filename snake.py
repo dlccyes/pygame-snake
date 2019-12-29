@@ -135,14 +135,14 @@ def obstacle(x,y,w,h,index):
     l_obs_x,l_obs_y,l_obs_w,l_obs_h,obstacle_index,gridSize
  
     #die if snake touches obstacles
-    if (x*gridSize < (x_player*2+gridSize)/2 < (x+w)*gridSize 
-        and y*gridSize < (y_player*2+gridSize)/2 < (y+h)*gridSize):
+    if ((x)*gridSize < (x_player*2+gridSize)/2 < (x+w)*gridSize 
+        and (y)*gridSize < (y_player*2+gridSize)/2 < (y+h)*gridSize):
         game_finished()
 
     #die if "bodies" touch obstacle
     for body in bodies:
-        if (x*gridSize < (body[0]*2+gridSize)/2 < (x+w)*gridSize 
-            and y*gridSize < (body[1]*2+gridSize)/2 < (y+h)*gridSize):
+        if ((x)*gridSize < (body[0]*2+gridSize)/2 < (x+w)*gridSize 
+            and (y)*gridSize < (body[1]*2+gridSize)/2 < (y+h)*gridSize):
             game_finished()    
 
     # obs_x,obs_y,obs_w,obs_h = x,y,w,h
@@ -249,7 +249,7 @@ def level_4():
     """level 4 - meet boss"""
     global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
     screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common,obstacle_index,\
-    keys,x_ammunition,y_ammunition,snakey,ticks
+    keys,x_ammunition,y_ammunition,snakey,ticks,total_score
     # if game_finished == True: #score = 10
     #     next_level_unlocked = True
     # else:
@@ -273,6 +273,8 @@ def level_4():
     snakey.lose_health()
     snakey.if_die() #then game over
     # print(snakey.length)
+    if snakey.length <= 8:
+        snakey.rage_mode()
 
     level_common(level_4,level_5)
 
@@ -382,7 +384,7 @@ def generate_ammunition_pos():
 
 
 class AISnake:
-    global x_player,y_player,velocity,ticks,bullet_pos_n_dir,total_score
+    global x_player,y_player,velocity,ticks,bullet_pos_n_dir,total_score,game_time
     def __init__(self,pos,length):
         self.x = pos[0]
         self.y = pos[1]
@@ -428,7 +430,7 @@ class AISnake:
         elif self.direction() == 'down':
             self.y += k*velocity
     def update_bodies(self):
-        self.bodies.append((self.x,self.y))
+        self.bodies.append([self.x,self.y])
     def bodies_correction(self):
         ''' make the AI snake be in correct length'''
         while len(self.bodies) > self.length:
@@ -441,6 +443,7 @@ class AISnake:
         # print('sss')
     def lose_health(self):
         '''lose health(length) when hit by fireball(bullet)'''
+        global total_score
         for pos in list(bullet_pos_n_dir.keys()):
             for body in self.bodies:
                 if (body[0] < pos[0]+gridSize/2 < body[0]+gridSize
@@ -452,6 +455,48 @@ class AISnake:
     def if_die(self):
         if self.length == 0:
             game_finished()
+    def rage_mode(self):
+        for i in range(len(self.bodies)):
+            j = len(self.bodies) - (i+1)
+            if self.bodies[0][0] > self.x and self.bodies[0][1] == self.y: #3 o'clock
+                s,t = 1,-1
+            elif self.bodies[0][0] > self.x and self.bodies[0][1] < self.y: #1.5 o'clock
+                s,t =  0,-1
+            elif self.bodies[0][0] == self.x and self.bodies[0][1] < self.y: #12 o'clock
+                s,t =  -1,-1
+            elif self.bodies[0][0] < self.x and self.bodies[0][1] < self.y: #10.5 o'clock
+                s,t =  -1,0
+            elif self.bodies[0][0] < self.x and self.bodies[0][1] == self.y: #9 o'clock
+                s,t =  -1,1
+            elif self.bodies[0][0] < self.x and self.bodies[0][1] > self.y: #7.5 o'clock
+                s,t =  0,1
+            elif self.bodies[0][0] == self.x and self.bodies[0][1] > self.y: #6 o'clock
+                s,t =  1,1
+            elif self.bodies[0][0] > self.x and self.bodies[0][1] > self.y: #4.5 o'clock
+                s,t =  1,0
+            self.bodies[i][0] = self.bodies[-1][0] + s*j*gridSize
+            self.bodies[i][1] = self.bodies[-1][1] + t*j*gridSize
+
+        # prev = game_time//125
+        # if game_time//125 != prev: #every 1/8s
+        # for i in range(len(self.bodies)):
+        #     j = len(self.bodies) - (i+1)
+        #     if self.bodies[i][0] > self.x and self.bodies[i][1] == self.y: #3 o'clock
+        #         self.bodies[i][1] -= j*gridSize
+        #     elif self.bodies[i][0] > self.x and self.bodies[i][1] < self.y: #1.5 o'clock
+        #         self.bodies[i][0] -= j*gridSize
+        #     elif self.bodies[i][0] == self.x and self.bodies[i][1] < self.y: #12 o'clock
+        #         self.bodies[i][0] -= j*gridSize
+        #     elif self.bodies[i][0] < self.x and self.bodies[i][1] < self.y: #10.5 o'clock
+        #         self.bodies[i][1] += j*gridSize
+        #     elif self.bodies[i][0] < self.x and self.bodies[i][1] == self.y: #9 o'clock
+        #         self.bodies[i][1] += j*gridSize
+        #     elif self.bodies[i][0] < self.x and self.bodies[i][1] > self.y: #7.5 o'clock
+        #         self.bodies[i][0] += j*gridSize
+        #     elif self.bodies[i][0] == self.x and self.bodies[i][1] > self.y: #6 o'clock
+        #         self.bodies[i][0] += j*gridSize
+        #     elif self.bodies[i][0] > self.x and self.bodies[i][1] > self.y: #4.5 o'clock
+        #         self.bodies[i][1] -= j*gridSize
 
 #Game Loop
 def snake_game():
@@ -462,7 +507,7 @@ def snake_game():
     generate_food, next_level_unlocked,l_obs_x,l_obs_y,l_obs_w,l_obs_h,level_1,level_2,\
     total_score,obstacle_index,bullet_pos_n_dir,up,down,right,left,velocity,keys,\
     isEaten_ammunition,generate_ammunition,x_ammunition, y_ammunition,ammunition_count,\
-    ticks
+    ticks,game_time
     
     screen = pygame.display.set_mode((screenWidth, screenHeight))
 
@@ -479,8 +524,6 @@ def snake_game():
 
         #Game's delay 
         pygame.time.delay(delay)
-
-
 
         screen.fill((0, 0, 0))
 
@@ -537,6 +580,9 @@ def snake_game():
         #draw the body
         for body in bodies :
             pygame.draw.rect(screen, colordict['white'], (body[0], body[1], gridSize, gridSize))
+
+        #update the screen
+        # pygame.display.update()
 
         # for circle area game
         # pygame.draw.line(screen,colordict['blue'],(5*gridSize,1.5*gridSize),(8*gridSize,1.5*gridSize),gridSize)
@@ -648,6 +694,8 @@ def snake_game():
 
         #update the screen
         pygame.display.update()
+
+
 
 if __name__ == '__main__':
     main()
