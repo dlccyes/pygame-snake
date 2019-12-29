@@ -63,29 +63,18 @@ class tkbutton():
     def __init__(self,x,y,w,h,text,command):
         self = tk.Button(menuscreen,text=text,command=command)
         self.place(x=x,y=y,width=w,height=h)
-        self.config(font=('Arial',32),bg='black',fg='white')
-        self.config(activebackground=self['bg'],activeforeground=self['fg'],bd=0,relief='sunken')
+        self.config(font=('Arial',32),bg='blue',fg='white')
+        self.config(activebackground=self['bg'],activeforeground=self['fg'],bd=5,relief='raised')
 def menu():
     global menuscreen
     menuscreen = tk.Tk()
     menuscreen.title('Snake')
     menuscreen.geometry('1080x600')
     menuscreen['bg'] = 'black'
-    # start = tk.Button(menuscreen,text='Play',command=main)
-    # start.place(x=300,y=200,width=400,height=100)
-    # start.config(font=('Arial',32),bg='black',fg='white')
-    # start.config(activebackground=start['bg'],activeforeground=start['fg'],bd=0,relief='sunken')
-    play_button = tkbutton(300,200,400,100,'Play',main)
-    options_button = tkbutton(500,300,200,100,'Options',options)
-    tutorial_button = tkbutton(500,500,200,100,'Tutorials',tutorials)
 
-    # start['font'] = ('Arial',32)
-    # start['bg'] = 'black'
-    # start['fg'] = 'white'
-    # start['activebackground'] = start['bg']
-    # start['activeforeground'] = start['fg']
-    # start['bd'] = 0
-    # start['relief'] = 'sunken' 
+    options_button = tkbutton(200,350,200,100,'Options',options)
+    tutorial_button = tkbutton(600,350,200,100,'Tutorials',tutorials)
+ 
     menuscreen.mainloop()
 
 def options():
