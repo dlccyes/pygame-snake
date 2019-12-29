@@ -58,22 +58,41 @@ def main():
 
     snake_game()
 
+class tkbutton():
+    global menuscreen
+    def __init__(self,x,y,w,h,text,command):
+        self = tk.Button(menuscreen,text=text,command=command)
+        self.place(x=x,y=y,width=w,height=h)
+        self.config(font=('Arial',32),bg='black',fg='white')
+        self.config(activebackground=self['bg'],activeforeground=self['fg'],bd=0,relief='sunken')
 def menu():
+    global menuscreen
     menuscreen = tk.Tk()
     menuscreen.title('Snake')
     menuscreen.geometry('1080x600')
     menuscreen['bg'] = 'black'
-    quick_start = tk.Button(menuscreen,text='Quick Start',command=main)
-    quick_start.place(x=300,y=200,width=400,height=100)
-    quick_start['font'] = ('Arial',32)
-    quick_start['bg'] = 'black'
-    quick_start['fg'] = 'white'
-    quick_start['activebackground'] = quick_start['bg']
-    quick_start['activeforeground'] = quick_start['fg']
-    quick_start['bd'] = 0
-    quick_start['relief'] = 'sunken' 
+    # start = tk.Button(menuscreen,text='Play',command=main)
+    # start.place(x=300,y=200,width=400,height=100)
+    # start.config(font=('Arial',32),bg='black',fg='white')
+    # start.config(activebackground=start['bg'],activeforeground=start['fg'],bd=0,relief='sunken')
+    play_button = tkbutton(300,200,400,100,'Play',main)
+    options_button = tkbutton(500,300,200,100,'Options',options)
+    tutorial_button = tkbutton(500,500,200,100,'Tutorials',tutorials)
+
+    # start['font'] = ('Arial',32)
+    # start['bg'] = 'black'
+    # start['fg'] = 'white'
+    # start['activebackground'] = start['bg']
+    # start['activeforeground'] = start['fg']
+    # start['bd'] = 0
+    # start['relief'] = 'sunken' 
     menuscreen.mainloop()
 
+def options():
+    pass
+
+def tutorials():
+    pass
 
 def button(unpressed_color, pressed_color,
     text, text_color, x_pos, y_pos, width, height, action = None):
