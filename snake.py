@@ -130,7 +130,7 @@ def menu():
     #buttons
     play_button = tk.Button(menuscreen,text='Play',command=main)
     options_button = tk.Button(menuscreen,text='Options',command=options)
-    tutorial_button = tk.Button(menuscreen,text='Tutorials',command=tutorials)
+    tutorial_button = tk.Button(menuscreen,text='Tutorials',command=page_1)
 
     play_button.place(anchor='center',relx=0.5,rely=0.35,width=280,height=120)
     play_button.config(font=('Arial',38),bg='#0036ff',fg='white')
@@ -161,66 +161,81 @@ def menu():
 def options():
     pass
 
-class TutorialsPages:
-    global menuscreen,play_button,options_button,tutorial_button,root,\
-    screenWidth,screenHeight,gridSize,blackk
-    def __init__(self):
-        pass
-    def page_1(self):
-        global to_menu_button,to_p2_button
-        # play_button.destroy()
-        # options_button.destroy()
-        # tutorial_button.destroy()
-        blackk.lift()
+def page_1():
+    global menuscreen,root,screenWidth,screenHeight,gridSize,blackk
+    p1canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
+    p1canvas.place(x=0,y=0)
 
-        p1canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
-        p1canvas.place(x=0,y=0)
+    to_menu_button = tk.Button(p1canvas,text='Menu',command=menu)
+    to_menu_button.place(anchor='s',relx=0.5,rely=1,width=130,height=60)
+    to_menu_button.config(font=('Arial',18),bg='#0036ff',fg='white')
+    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=5,relief='raised')
+    
+    to_p2_button = tk.Button(p1canvas,text='Next Page',command=page_2)
+    to_p2_button.place(anchor='se',relx=1,rely=1,width=150,height=60)
+    to_p2_button.config(font=('Arial',18),bg='#ff0000',fg='white')
+    to_p2_button.config(activebackground=to_p2_button['bg'],activeforeground=to_p2_button['fg'],bd=5,relief='raised')
 
-        to_menu_button = tk.Button(p1canvas,text='Menu',command=menu)
-        to_menu_button.place(anchor='s',relx=0.5,rely=1,width=130,height=60)
-        to_menu_button.config(font=('Arial',18),bg='#0036ff',fg='white')
-        to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=5,relief='raised')
-        
-        to_p2_button = tk.Button(p1canvas,text='Next Page',command=self.page_2)
-        to_p2_button.place(anchor='se',relx=1,rely=1,width=150,height=60)
-        to_p2_button.config(font=('Arial',18),bg='#ff0000',fg='white')
-        to_p2_button.config(activebackground=to_p2_button['bg'],activeforeground=to_p2_button['fg'],bd=5,relief='raised')
-        
-        # left_bar = tk.Label(menuscreen,bg='blue')
-        # left_bar.place(x=0,y=0,width=gridSize,height=screenHeight)
+    img = Image.open("startpic.png")
+    img = img.resize((900,int(900*(867/1613))))
+    renderimg = ImageTk.PhotoImage(img)
 
-        # load = Image.open("parrot.jpg")
-        # render = ImageTk.PhotoImage(Image.open("parrot.jpg"))
-        
-        img = Image.open("startpic.png")
-        img = img.resize((900,int(900*(867/1613))))
-        renderimg = ImageTk.PhotoImage(img)
-        # renderimg = ImageTk.PhotoImage(file="p1img.png")
-        # p1canvas.create_image(540,300,anchor='center',image=renderimg)
-        # p1canvas.lift()
-        p1img = tk.Label(p1canvas, image=renderimg)
-        p1img.image = renderimg
-        p1img.place(relx=0.5,rely=0.45,anchor='center')
-        p1img['bd']=0
+    p1img = tk.Label(p1canvas, image=renderimg)
+    p1img.image = renderimg
+    p1img.place(relx=0.5,rely=0.45,anchor='center')
+    p1img['bd']=0
 
-        # p1img.lower()`
-        # text_food = p1canvas.create_text(200,100,text='this is food, eat it to be longer',font=('Segoe Print',20),fill='red')
-        # text_food.lift()
-        # text_food.place()
-        text_you = tk.Label(p1canvas,text='This white block is you,\nuse up/down/left/right arrow to move.',font=('Segoe Print',16),bd=2,relief='solid')
-        text_you.place(anchor='center',relx=0.25,rely=0.27,width=450,height=90)
-        text_you.config(bg='#7ecd62',fg='black')
+    text_you = tk.Label(p1canvas,text='This white block is you,\nuse up/down/left/right arrow to move.',font=('Segoe Print',16),bd=2,relief='solid')
+    text_you.place(anchor='center',relx=0.25,rely=0.27,width=450,height=90)
+    text_you.config(bg='#7ecd62',fg='black')
 
-        text_food = tk.Label(p1canvas,text='This yellow block is food, eat it to become longer, \nand your score will +1.\nThe speed will also become faster.',font=('Segoe Print',16),bd=2,relief='solid')
-        text_food.place(anchor='center',relx=0.6,rely=0.68,width=580,height=140)
-        text_food.config(bg='#7ecd62',fg='black')
+    text_food = tk.Label(p1canvas,text='This yellow block is food, eat it to become longer, \nand your score will +1.\nThe speed will also become faster.',font=('Segoe Print',16),bd=2,relief='solid')
+    text_food.place(anchor='center',relx=0.6,rely=0.68,width=580,height=140)
+    text_food.config(bg='#7ecd62',fg='black')
 
-        # root.update
+    root.update()
 
-    def page_2(self):
-        pass
+def page_2():
+    global menuscreen,root,screenWidth,screenHeight,gridSize,blackk
 
+    print('yep')
+    blackk.lift()
+    p2canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
+    p2canvas.place(x=0,y=0)
+    # p2canvas.lift()
 
+    to_p1_button = tk.Button(p2canvas,text='Previous Page',command=page_1)
+    to_p1_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
+    to_p1_button.config(font=('Arial',18),bg='#ff0000',fg='white')
+    to_p1_button.config(activebackground=to_p1_button['bg'],activeforeground=to_p1_button['fg'],bd=5,relief='raised')
+
+    to_menu_button = tk.Button(p2canvas,text='Menu',command=menu)
+    to_menu_button.place(anchor='s',relx=0.5,rely=1,width=130,height=60)
+    to_menu_button.config(font=('Arial',18),bg='#0036ff',fg='white')
+    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=5,relief='raised')
+    
+    to_p3_button = tk.Button(p2canvas,text='Next Page',command=page_3)
+    to_p3_button.place(anchor='se',relx=1,rely=1,width=150,height=60)
+    to_p3_button.config(font=('Arial',18),bg='#ff0000',fg='white')
+    to_p3_button.config(activebackground=to_p3_button['bg'],activeforeground=to_p3_button['fg'],bd=5,relief='raised')
+
+    img = Image.open("slowpillpic.png")
+    img = img.resize((900,int(900*(867/1613))))
+    renderimg = ImageTk.PhotoImage(img)
+
+    p1img = tk.Label(p2canvas, image=renderimg)
+    p1img.image = renderimg
+    p1img.place(relx=0.5,rely=0.45,anchor='center')
+    p1img['bd']=0
+
+    text_slowpill = tk.Label(p2canvas,text='This red block is slowpill,\nit will be generated when you reach certain speed,\neat it to become slower. ',font=('Segoe Print',16),bd=2,relief='solid')
+    text_slowpill.place(anchor='center',relx=0.6,rely=0.5,width=600,height=120)
+    text_slowpill.config(bg='#7ecd62',fg='black')
+
+    root.update()
+
+def page_3():
+    pass
 
 def tutorials():
     tutor = TutorialsPages()
