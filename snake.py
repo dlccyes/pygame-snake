@@ -94,22 +94,31 @@ def menu():
     blackk = tk.Label(menuscreen,bg='black')
     blackk.place(x=0,y=0,width=screenWidth,height=screenHeight)
 
+    img = Image.open("snakecover.png")
+    img = img.resize((screenWidth,screenHeight))
+    renderimg = ImageTk.PhotoImage(img)
+
+    cover = tk.Label(menuscreen, image=renderimg)
+    cover.image = renderimg
+    cover.place(relx=0.5,rely=0.5,anchor='center')
+    cover['bd']=0
+
     #buttons
     play_button = tk.Button(menuscreen,text='Play',command=main)
     options_button = tk.Button(menuscreen,text='Options',command=options)
     tutorial_button = tk.Button(menuscreen,text='Tutorials',command=page_1)
 
-    play_button.place(anchor='center',relx=0.5,rely=0.35,width=280,height=120)
+    play_button.place(anchor='center',relx=0.18,rely=0.87,width=280,height=120)
     play_button.config(font=('Arial',38),bg='#0036ff',fg='white')
-    play_button.config(activebackground=play_button['bg'],activeforeground=play_button['fg'],bd=5,relief='raised')
+    play_button.config(activebackground=play_button['bg'],activeforeground=play_button['fg'],bd=3,relief='raised')
 
-    options_button.place(anchor='center',relx=0.35,rely=0.65,width=200,height=100)
+    options_button.place(anchor='center',relx=0.6,rely=0.87,width=200,height=100)
     options_button.config(font=('Arial',30),bg='#ff7000',fg='white')
-    options_button.config(activebackground=options_button['bg'],activeforeground=options_button['fg'],bd=5,relief='raised')
+    options_button.config(activebackground=options_button['bg'],activeforeground=options_button['fg'],bd=3,relief='raised')
 
-    tutorial_button.place(anchor='center',relx=0.65,rely=0.65,width=200,height=100)
+    tutorial_button.place(anchor='center',relx=0.85,rely=0.87,width=200,height=100)
     tutorial_button.config(font=('Arial',30),bg='#ff7000',fg='white')
-    tutorial_button.config(activebackground=tutorial_button['bg'],activeforeground=tutorial_button['fg'],bd=5,relief='raised')
+    tutorial_button.config(activebackground=tutorial_button['bg'],activeforeground=tutorial_button['fg'],bd=3,relief='raised')
 
 
     #embed the window
@@ -133,12 +142,12 @@ def page_1():
     to_menu_button = tk.Button(p1canvas,text='Menu',command=menu)
     to_menu_button.place(anchor='s',relx=0.5,rely=1,width=130,height=60)
     to_menu_button.config(font=('Arial',18),bg='#0036ff',fg='white')
-    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=5,relief='raised')
+    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=3,relief='raised')
     
     to_p2_button = tk.Button(p1canvas,text='Next Page',command=page_2)
     to_p2_button.place(anchor='se',relx=1,rely=1,width=150,height=60)
     to_p2_button.config(font=('Arial',18),bg='#ff0000',fg='white')
-    to_p2_button.config(activebackground=to_p2_button['bg'],activeforeground=to_p2_button['fg'],bd=5,relief='raised')
+    to_p2_button.config(activebackground=to_p2_button['bg'],activeforeground=to_p2_button['fg'],bd=3,relief='raised')
 
     img = Image.open("startpic.png")
     img = img.resize((900,int(900*(867/1613))))
@@ -170,17 +179,17 @@ def page_2():
     to_p1_button = tk.Button(p2canvas,text='Previous Page',command=page_1)
     to_p1_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
     to_p1_button.config(font=('Arial',18),bg='#ff0000',fg='white')
-    to_p1_button.config(activebackground=to_p1_button['bg'],activeforeground=to_p1_button['fg'],bd=5,relief='raised')
+    to_p1_button.config(activebackground=to_p1_button['bg'],activeforeground=to_p1_button['fg'],bd=3,relief='raised')
 
     to_menu_button = tk.Button(p2canvas,text='Menu',command=menu)
     to_menu_button.place(anchor='s',relx=0.5,rely=1,width=130,height=60)
     to_menu_button.config(font=('Arial',18),bg='#0036ff',fg='white')
-    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=5,relief='raised')
+    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=3,relief='raised')
     
     to_p3_button = tk.Button(p2canvas,text='Next Page',command=page_3)
     to_p3_button.place(anchor='se',relx=1,rely=1,width=150,height=60)
     to_p3_button.config(font=('Arial',18),bg='#ff0000',fg='white')
-    to_p3_button.config(activebackground=to_p3_button['bg'],activeforeground=to_p3_button['fg'],bd=5,relief='raised')
+    to_p3_button.config(activebackground=to_p3_button['bg'],activeforeground=to_p3_button['fg'],bd=3,relief='raised')
 
     img = Image.open("slowpillpic.png")
     img = img.resize((900,int(900*(867/1613))))
@@ -208,17 +217,17 @@ def page_3():
     to_p2_button = tk.Button(p3canvas,text='Previous Page',command=page_2)
     to_p2_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
     to_p2_button.config(font=('Arial',18),bg='#ff0000',fg='white')
-    to_p2_button.config(activebackground=to_p2_button['bg'],activeforeground=to_p2_button['fg'],bd=5,relief='raised')
+    to_p2_button.config(activebackground=to_p2_button['bg'],activeforeground=to_p2_button['fg'],bd=3,relief='raised')
 
     to_menu_button = tk.Button(p3canvas,text='Menu',command=menu)
     to_menu_button.place(anchor='s',relx=0.5,rely=1,width=130,height=60)
     to_menu_button.config(font=('Arial',18),bg='#0036ff',fg='white')
-    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=5,relief='raised')
+    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=3,relief='raised')
     
     to_p4_button = tk.Button(p3canvas,text='Next Page',command=page_4)
     to_p4_button.place(anchor='se',relx=1,rely=1,width=150,height=60)
     to_p4_button.config(font=('Arial',18),bg='#ff0000',fg='white')
-    to_p4_button.config(activebackground=to_p4_button['bg'],activeforeground=to_p4_button['fg'],bd=5,relief='raised')
+    to_p4_button.config(activebackground=to_p4_button['bg'],activeforeground=to_p4_button['fg'],bd=3,relief='raised')
 
     img = Image.open("nextlevelpic.png")
     img = img.resize((900,int(900*(867/1613))))
@@ -246,17 +255,17 @@ def page_4():
     to_p3_button = tk.Button(p4canvas,text='Previous Page',command=page_3)
     to_p3_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
     to_p3_button.config(font=('Arial',18),bg='#ff0000',fg='white')
-    to_p3_button.config(activebackground=to_p3_button['bg'],activeforeground=to_p3_button['fg'],bd=5,relief='raised')
+    to_p3_button.config(activebackground=to_p3_button['bg'],activeforeground=to_p3_button['fg'],bd=3,relief='raised')
 
     to_menu_button = tk.Button(p4canvas,text='Menu',command=menu)
     to_menu_button.place(anchor='s',relx=0.5,rely=1,width=130,height=60)
     to_menu_button.config(font=('Arial',18),bg='#0036ff',fg='white')
-    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=5,relief='raised')
+    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=3,relief='raised')
     
     to_p5_button = tk.Button(p4canvas,text='Next Page',command=page_5)
     to_p5_button.place(anchor='se',relx=1,rely=1,width=150,height=60)
     to_p5_button.config(font=('Arial',18),bg='#ff0000',fg='white')
-    to_p5_button.config(activebackground=to_p5_button['bg'],activeforeground=to_p5_button['fg'],bd=5,relief='raised')
+    to_p5_button.config(activebackground=to_p5_button['bg'],activeforeground=to_p5_button['fg'],bd=3,relief='raised')
 
     img = Image.open("obstaclepic.png")
     img = img.resize((900,int(900*(867/1613))))
@@ -274,7 +283,7 @@ def page_4():
     root.update()
 
 def page_5():
-    '''boss explained'''
+    '''levels explained'''
     global menuscreen,root,screenWidth,screenHeight,gridSize
 
     p5canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
@@ -284,17 +293,17 @@ def page_5():
     to_p4_button = tk.Button(p5canvas,text='Previous Page',command=page_4)
     to_p4_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
     to_p4_button.config(font=('Arial',18),bg='#ff0000',fg='white')
-    to_p4_button.config(activebackground=to_p4_button['bg'],activeforeground=to_p4_button['fg'],bd=5,relief='raised')
+    to_p4_button.config(activebackground=to_p4_button['bg'],activeforeground=to_p4_button['fg'],bd=3,relief='raised')
 
     to_menu_button = tk.Button(p5canvas,text='Menu',command=menu)
     to_menu_button.place(anchor='s',relx=0.5,rely=1,width=130,height=60)
     to_menu_button.config(font=('Arial',18),bg='#0036ff',fg='white')
-    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=5,relief='raised')
+    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=3,relief='raised')
     
     to_p6_button = tk.Button(p5canvas,text='Next Page',command=page_6)
     to_p6_button.place(anchor='se',relx=1,rely=1,width=150,height=60)
     to_p6_button.config(font=('Arial',18),bg='#ff0000',fg='white')
-    to_p6_button.config(activebackground=to_p6_button['bg'],activeforeground=to_p6_button['fg'],bd=5,relief='raised')
+    to_p6_button.config(activebackground=to_p6_button['bg'],activeforeground=to_p6_button['fg'],bd=3,relief='raised')
 
     img = Image.open("aisnakepic.png")
     img = img.resize((900,int(900*(867/1613))))
@@ -315,6 +324,93 @@ def page_5():
 
     root.update()
 
+def page_6():
+    '''ammunition and others explained'''
+    global menuscreen,root,screenWidth,screenHeight,gridSize
+
+    p6canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
+    p6canvas.place(x=0,y=0)
+    # p6canvas.lift()
+
+    to_p5_button = tk.Button(p6canvas,text='Previous Page',command=page_5)
+    to_p5_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
+    to_p5_button.config(font=('Arial',18),bg='#ff0000',fg='white')
+    to_p5_button.config(activebackground=to_p5_button['bg'],activeforeground=to_p5_button['fg'],bd=3,relief='raised')
+
+    to_menu_button = tk.Button(p6canvas,text='Menu',command=menu)
+    to_menu_button.place(anchor='s',relx=0.5,rely=1,width=130,height=60)
+    to_menu_button.config(font=('Arial',18),bg='#0036ff',fg='white')
+    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=3,relief='raised')
+    
+    to_p7_button = tk.Button(p6canvas,text='Next Page',command=page_7)
+    to_p7_button.place(anchor='se',relx=1,rely=1,width=150,height=60)
+    to_p7_button.config(font=('Arial',18),bg='#ff0000',fg='white')
+    to_p7_button.config(activebackground=to_p7_button['bg'],activeforeground=to_p7_button['fg'],bd=3,relief='raised')
+
+    img = Image.open("fireballpic.png")
+    img = img.resize((900,int(900*(867/1613))))
+    renderimg = ImageTk.PhotoImage(img)
+
+    ppimg = tk.Label(p6canvas, image=renderimg)
+    ppimg.image = renderimg
+    ppimg.place(relx=0.5,rely=0.45,anchor='center')
+    ppimg['bd']=0
+
+    text_ammunition = tk.Label(p6canvas,text="This green block is ammunition,\neat it to get fireballs,\nyou can store a maximum of 3 firaballs.",font=('Segoe Print',16),bd=2,relief='solid')
+    text_ammunition.place(anchor='center',relx=0.75,rely=0.22,width=450,height=130)
+    text_ammunition.config(bg='#7ecd62',fg='black')
+
+    text_fireball = tk.Label(p6canvas,text="Press space to fire a fireball.\nIf the fireball hit the boss, boss's health will -1.",font=('Segoe Print',16),bd=2,relief='solid')
+    text_fireball.place(anchor='center',relx=0.3,rely=0.62,width=550,height=85)
+    text_fireball.config(bg='#7ecd62',fg='black')
+
+    text_fireballicon = tk.Label(p6canvas,text="This shows how many fireballs you can shoot.",font=('Segoe Print',16),bd=2,relief='solid')
+    text_fireballicon.place(anchor='center',relx=0.27,rely=0.17,width=530,height=50)
+    text_fireballicon.config(bg='#7ecd62',fg='black')
+
+    root.update()
+
+def page_7():
+    '''rage mode'''
+    global menuscreen,root,screenWidth,screenHeight,gridSize
+
+    p7canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
+    p7canvas.place(x=0,y=0)
+    # p7canvas.lift()
+
+    to_p6_button = tk.Button(p7canvas,text='Previous Page',command=page_6)
+    to_p6_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
+    to_p6_button.config(font=('Arial',18),bg='#ff0000',fg='white')
+    to_p6_button.config(activebackground=to_p6_button['bg'],activeforeground=to_p6_button['fg'],bd=3,relief='raised')
+
+    to_menu_button = tk.Button(p7canvas,text='Menu',command=menu)
+    to_menu_button.place(anchor='s',relx=0.5,rely=1,width=130,height=60)
+    to_menu_button.config(font=('Arial',18),bg='#0036ff',fg='white')
+    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=3,relief='raised')
+    
+    # to_p8_button = tk.Button(p7canvas,text='Next Page',command=page_8)
+    # to_p8_button.place(anchor='se',relx=1,rely=1,width=150,height=60)
+    # to_p8_button.config(font=('Arial',18),bg='#ff0000',fg='white')
+    # to_p8_button.config(activebackground=to_p8_button['bg'],activeforeground=to_p8_button['fg'],bd=3,relief='raised')
+
+    img = Image.open("ragemodepic.png")
+    img = img.resize((900,int(900*(867/1613))))
+    renderimg = ImageTk.PhotoImage(img)
+
+    ppimg = tk.Label(p7canvas, image=renderimg)
+    ppimg.image = renderimg
+    ppimg.place(relx=0.5,rely=0.45,anchor='center')
+    ppimg['bd']=0
+
+    text_levelsexplain = tk.Label(p7canvas,text='When the boss is below certain health,\n"rage mode" will be activated.\nIt will 甩尾, and thus you\'re more likely to be hit.',font=('Segoe Print',16),bd=2,relief='solid')
+    text_levelsexplain.place(anchor='center',relx=0.4,rely=0.25,width=560,height=130)
+    text_levelsexplain.config(bg='#7ecd62',fg='black')
+
+    root.update()
+
+def page_8():
+    pass
+
 def tutorials():
     tutor = TutorialsPages()
     tutor.page_1()
@@ -333,7 +429,7 @@ def button(unpressed_color, pressed_color,
     else:
         pygame.draw.rect(screen, colordict[unpressed_color], (x_pos,y_pos,width,height))
 
-    font = pygame.font.SysFont('Calibri', 25, bold=True)
+    font = pygame.font.SysFont('Arial', 40)
     button_text = font.render(text, True, colordict[text_color])
     button_text_rect = button_text.get_rect()
     button_text_rect.center = (x_pos+width/2 , y_pos+height/2)
@@ -352,8 +448,9 @@ def pause():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 isGame = False
+        # button()
         mouse_pos = pygame.mouse.get_pos()
-        x_pos,y_pos,width,height=screenWidth/2-120/2,screenHeight/2-60/2,120,60
+        x_pos,y_pos,width,height=screenWidth/2-120/2,screenHeight/2-60/2,150,75
 
         if (x_pos < mouse_pos[0] < x_pos + width #click the button to resume
             and y_pos < mouse_pos[1] < y_pos + height):
@@ -363,8 +460,8 @@ def pause():
         else:
             pygame.draw.rect(screen, colordict['red'], (x_pos,y_pos,width,height))
 
-        font = pygame.font.SysFont('Calibri', 25, bold=True)
-        button_text = font.render('resume', True, colordict['white'])
+        font = pygame.font.SysFont('Arial', 40)
+        button_text = font.render('Resume', True, colordict['white'])
         button_text_rect = button_text.get_rect()
         button_text_rect.center = (x_pos+width/2 , y_pos+height/2)
         screen.blit(button_text, button_text_rect)
@@ -390,8 +487,8 @@ def game_finished():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 isGame = False
-        button('red','pink','quit','white',380,screenHeight/2-60/2,120,60,quit_game)
-        button('red','pink','restart','white',580,screenHeight/2-60/2,120,60,restart)
+        button('red','pink','Quit','white',380,screenHeight/2-60/2,150,75,quit_game)
+        button('red','pink','Menu','white',580,screenHeight/2-60/2,150,75,restart)
         pygame.display.update()
 
 def obstacle(x,y,w,h,index):
@@ -848,7 +945,9 @@ def snake_game():
             for body in bodies :
                 if x_player == body[0] and y_player == body[1] :
                     game_finished()
-                    
+        
+        if x_player < -gridSize:
+            game_finished()
        #to let the game close 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -1014,15 +1113,15 @@ def snake_game():
 
         if dict_level['level4'] == True:
             #draw bullet image
-            bullet_image = pygame.image.load('bullet.png')
-            bullet_image = pygame.transform.scale(bullet_image,(55,40))
+            bullet_image = pygame.image.load('fireball.png')
+            bullet_image = pygame.transform.scale(bullet_image,(30,30))
             bullet_image.convert()
             if ammunition_count >= 1:
-                screen.blit(bullet_image,(100,3))
+                screen.blit(bullet_image,(120,6))
             if ammunition_count >= 2:
-                screen.blit(bullet_image,(120,3))
+                screen.blit(bullet_image,(135,6))
             if ammunition_count == 3:
-                screen.blit(bullet_image,(140,3))
+                screen.blit(bullet_image,(150,6))
 
         #update the screen
         pygame.display.update()
