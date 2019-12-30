@@ -4,6 +4,7 @@ import sys
 import time
 import tkinter as tk
 import os
+from PIL import ImageTk,Image  
 
 def main():
     global screenWidth,screenHeight,game_speed,gridSize,delay,\
@@ -12,20 +13,19 @@ def main():
     generate_food, l_obs_x,l_obs_y,l_obs_w,l_obs_h,dict_level,total_score,obstacle_index,\
     moving_obs_y_1,moving_obs_y_2,moving_obstacle,bullet_pos_n_dir,\
     isEaten_ammunition,generate_ammunition,ammunition_count,snakey,ticks,root,\
-    play_button,options_button,tutorial_button,x_slowpill,y_slowpill,x_ammunition,y_ammunition
+    play_button,options_button,tutorial_button,x_slowpill,y_slowpill,x_ammunition,y_ammunition,\
+    blackk
 
-    play_button.destroy()
-    options_button.destroy()
-    tutorial_button.destroy()
+    # play_button.destroy()
+    # options_button.destroy()
+    # tutorial_button.destroy()
 
-    pygame.init()
+    blackk.lift()
 
-    screenWidth = 1080
-    screenHeight = 600
+    # pygame.init()
 
     #initial variable
     game_speed = 5
-    gridSize = 40
     delay = 140
     x_player = 1*gridSize #snake's head's x pos
     y_player = 1*gridSize #snake's head's y pos
@@ -52,9 +52,10 @@ def main():
     next_level_unlocked = False
     l_obs_x,l_obs_y,l_obs_w,l_obs_h = [],[],[],[]
     dict_level={'level1':True,'level2':False,'level3':False, 'level4':False}
-    colordict = {'yellow':(255,255,0),'blue':(54,135,255),'black':(0,0,0),\
-    'white':(255,255,255),'pink':(255,131,239),'red':(255,0,0),'orange':(246,169,27),\
+    colordict = {'yellow':(255,255,0),'blue':(40,126,255),'black':(0,0,0),\
+    'white':(255,255,255),'pink':(255,131,239),'red':(255,0,0),'orange':(255, 80, 42),\
     'green':(94,203,46),'purple':(204,0,182)}
+    # 54,135,255
     total_score = 0
     obstacle_index = dict()
     # mov_x,mov_y,mov_w,mov_h = 0,0,0,0
@@ -68,7 +69,7 @@ def main():
 
     snake_game()
 
-# class tkbutton():
+# class tkbutton:
 #     global menuscreen
 #     def __init__(self,x,y,w,h,text,command):
 #         self = tk.Button(menuscreen,text=text,command=command)
@@ -81,15 +82,45 @@ def main():
         # else:
         #     pass
 
-def menu():
-    global menuscreen,play_button,options_button,tutorial_button,root
+def initial():
+    global root,screenWidth,screenHeight,gridSize,menuscreen
+
+    screenWidth = 1080
+    screenHeight = 600
+    gridSize = 40
+
     root = tk.Tk()
     root.title('Snake')
-    root.geometry('1080x600')
+    root.geometry(f'{screenWidth}x{screenHeight}')
     root['bg'] = 'black'
+    
 
-    menuscreen = tk.Frame(root,width=1080,height=600,bg='black')
-    menuscreen.pack()
+    menu()
+
+def restart():
+    pygame.quit()
+    menu()
+
+def menu():
+    global menuscreen,play_button,options_button,tutorial_button,root,\
+    screenWidth,screenHeight,gridSize,to_menu_button,blackk
+
+    # if menuscreen exist → do nothing
+    # if not → create it
+    try:
+        bool(menuscreen)
+    except:
+        menuscreen = tk.Frame(root,width=1080,height=600,bg='black')
+        menuscreen.pack()
+
+    blackk = tk.Label(menuscreen,bg='black')
+    blackk.place(x=0,y=0,width=screenWidth,height=screenHeight)
+
+    # try:
+    #     to_menu_button.destroy()
+    #     to_p2_button.destroy()
+    # except:
+    #     pass
 
     # use class tkbuttons but hard to use in other functions
     # play_button = tkbutton(300,200,400,100,'Play',main)
@@ -101,31 +132,100 @@ def menu():
     options_button = tk.Button(menuscreen,text='Options',command=options)
     tutorial_button = tk.Button(menuscreen,text='Tutorials',command=tutorials)
 
-    play_button.place(x=300,y=200,width=400,height=100)
-    play_button.config(font=('Arial',32),bg='blue',fg='white')
+    play_button.place(anchor='center',relx=0.5,rely=0.35,width=280,height=120)
+    play_button.config(font=('Arial',38),bg='#0036ff',fg='white')
     play_button.config(activebackground=play_button['bg'],activeforeground=play_button['fg'],bd=5,relief='raised')
 
-    options_button.place(x=200,y=350,width=200,height=100)
-    options_button.config(font=('Arial',32),bg='blue',fg='white')
+    options_button.place(anchor='center',relx=0.35,rely=0.65,width=200,height=100)
+    options_button.config(font=('Arial',30),bg='#ff7000',fg='white')
     options_button.config(activebackground=options_button['bg'],activeforeground=options_button['fg'],bd=5,relief='raised')
 
-    tutorial_button.place(x=600,y=350,width=200,height=100)
-    tutorial_button.config(font=('Arial',32),bg='blue',fg='white')
+    tutorial_button.place(anchor='center',relx=0.65,rely=0.65,width=200,height=100)
+    tutorial_button.config(font=('Arial',30),bg='#ff7000',fg='white')
     tutorial_button.config(activebackground=tutorial_button['bg'],activeforeground=tutorial_button['fg'],bd=5,relief='raised')
 
-    # root.update()
 
     #embed the window
     # os.environ['SDL_WINDOWID'] = str(menuscreen.winfo_id())
     # os.environ['SDL_VIDEODRIVER'] = 'windib'
- 
+    
+    pygame.init()
     root.mainloop()
+    # root.update()
+
+    # while True:
+        # root.update()
+        # pygame.display.update()
+
 
 def options():
     pass
 
+class TutorialsPages:
+    global menuscreen,play_button,options_button,tutorial_button,root,\
+    screenWidth,screenHeight,gridSize,blackk
+    def __init__(self):
+        pass
+    def page_1(self):
+        global to_menu_button,to_p2_button
+        # play_button.destroy()
+        # options_button.destroy()
+        # tutorial_button.destroy()
+        blackk.lift()
+
+        p1canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
+        p1canvas.place(x=0,y=0)
+
+        to_menu_button = tk.Button(p1canvas,text='Menu',command=menu)
+        to_menu_button.place(anchor='s',relx=0.5,rely=1,width=130,height=60)
+        to_menu_button.config(font=('Arial',18),bg='#0036ff',fg='white')
+        to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=5,relief='raised')
+        
+        to_p2_button = tk.Button(p1canvas,text='Next Page',command=self.page_2)
+        to_p2_button.place(anchor='se',relx=1,rely=1,width=150,height=60)
+        to_p2_button.config(font=('Arial',18),bg='#ff0000',fg='white')
+        to_p2_button.config(activebackground=to_p2_button['bg'],activeforeground=to_p2_button['fg'],bd=5,relief='raised')
+        
+        # left_bar = tk.Label(menuscreen,bg='blue')
+        # left_bar.place(x=0,y=0,width=gridSize,height=screenHeight)
+
+        # load = Image.open("parrot.jpg")
+        # render = ImageTk.PhotoImage(Image.open("parrot.jpg"))
+        
+        img = Image.open("startpic.png")
+        img = img.resize((900,int(900*(867/1613))))
+        renderimg = ImageTk.PhotoImage(img)
+        # renderimg = ImageTk.PhotoImage(file="p1img.png")
+        # p1canvas.create_image(540,300,anchor='center',image=renderimg)
+        # p1canvas.lift()
+        p1img = tk.Label(p1canvas, image=renderimg)
+        p1img.image = renderimg
+        p1img.place(relx=0.5,rely=0.45,anchor='center')
+        p1img['bd']=0
+
+        # p1img.lower()`
+        # text_food = p1canvas.create_text(200,100,text='this is food, eat it to be longer',font=('Segoe Print',20),fill='red')
+        # text_food.lift()
+        # text_food.place()
+        text_you = tk.Label(p1canvas,text='This white block is you,\nuse up/down/left/right arrow to move.',font=('Segoe Print',16),bd=2,relief='solid')
+        text_you.place(anchor='center',relx=0.25,rely=0.27,width=450,height=90)
+        text_you.config(bg='#7ecd62',fg='black')
+
+        text_food = tk.Label(p1canvas,text='This yellow block is food, eat it to become longer, \nand your score will +1.\nThe speed will also become faster.',font=('Segoe Print',16),bd=2,relief='solid')
+        text_food.place(anchor='center',relx=0.6,rely=0.68,width=580,height=140)
+        text_food.config(bg='#7ecd62',fg='black')
+
+        # root.update
+
+    def page_2(self):
+        pass
+
+
+
 def tutorials():
-    pass
+    tutor = TutorialsPages()
+    tutor.page_1()
+
 
 def button(unpressed_color, pressed_color,
     text, text_color, x_pos, y_pos, width, height, action = None):
@@ -148,8 +248,8 @@ def button(unpressed_color, pressed_color,
     pygame.display.flip()
 
 def quit_game():
-    sys.exit() 
     pygame.quit()
+    sys.exit() 
 
 def pause():
     global isGame,colordict,screen,mouse_pos,colordict
@@ -198,7 +298,7 @@ def game_finished():
             if event.type == pygame.QUIT:
                 isGame = False
         button('red','pink','quit','white',380,screenHeight/2-60/2,120,60,quit_game)
-        button('red','pink','restart','white',580,screenHeight/2-60/2,120,60,main)
+        button('red','pink','restart','white',580,screenHeight/2-60/2,120,60,restart)
         pygame.display.update()
 
 def obstacle(x,y,w,h,index):
@@ -270,7 +370,7 @@ def level_1():
     global tail_length, next_level_unlocked, x_player, y_player,obstacle,screenHeight,\
     screenWidth,gridSize,level_2,delay,level_common,obstacle_index
 
-    if tail_length == 2: #score = 10
+    if tail_length == 11: #score = 10
         next_level_unlocked = True
 
     level_common(level_1,level_2)
@@ -694,6 +794,7 @@ def snake_game():
             right = True
             up = left = down = False
 
+        # print(keys[pygame.K_UP])
         # bodies.append((x_player, y_player))
 
         if up :
@@ -810,14 +911,13 @@ def snake_game():
 
         
 
-        font = pygame.font.SysFont("None", 30)
+        font = pygame.font.SysFont('Segoe UI Black', 25)
         textScore = font.render("Score: {}".format(total_score), True, colordict['black'])
-        screen.blit(textScore, (10, 10))
+        screen.blit(textScore, (10, 3))
         
-        font = pygame.font.SysFont('Calibri', 30)
-        time_text = font.render('time: %ss'%str(game_time//1000), True, (255, 0, 0))
-        screen.blit(time_text, (100,100))
-        # pygame.display.flip()
+        # font = pygame.font.SysFont('Segoe UI Black', 25)
+        # time_text = font.render('time: %ss'%str(game_time//1000), True, colordict['red'])
+        # screen.blit(time_text, (950,5))
 
         if dict_level['level4'] == True:
             #draw bullet image
@@ -837,4 +937,4 @@ def snake_game():
 
 if __name__ == '__main__':
     # main()
-    menu()
+    initial()
