@@ -94,17 +94,6 @@ def menu():
     blackk = tk.Label(menuscreen,bg='black')
     blackk.place(x=0,y=0,width=screenWidth,height=screenHeight)
 
-    # try:
-    #     to_menu_button.destroy()
-    #     to_p2_button.destroy()
-    # except:
-    #     pass
-
-    # use class tkbuttons but hard to use in other functions
-    # play_button = tkbutton(300,200,400,100,'Play',main)
-    # options_button = tkbutton(200,350,200,100,'Options',options)
-    # tutorial_button = tkbutton(600,350,200,100,'Tutorials',tutorials)
-
     #buttons
     play_button = tk.Button(menuscreen,text='Play',command=main)
     options_button = tk.Button(menuscreen,text='Options',command=options)
@@ -131,11 +120,6 @@ def menu():
     root.mainloop()
     # root.update()
 
-    # while True:
-        # root.update()
-        # pygame.display.update()
-
-
 def options():
     pass
 
@@ -160,10 +144,10 @@ def page_1():
     img = img.resize((900,int(900*(867/1613))))
     renderimg = ImageTk.PhotoImage(img)
 
-    p1img = tk.Label(p1canvas, image=renderimg)
-    p1img.image = renderimg
-    p1img.place(relx=0.5,rely=0.45,anchor='center')
-    p1img['bd']=0
+    ppimg = tk.Label(p1canvas, image=renderimg)
+    ppimg.image = renderimg
+    ppimg.place(relx=0.5,rely=0.45,anchor='center')
+    ppimg['bd']=0
 
     text_you = tk.Label(p1canvas,text='This white block is you,\nuse up/down/left/right arrow to move.',font=('Segoe Print',16),bd=2,relief='solid')
     text_you.place(anchor='center',relx=0.25,rely=0.27,width=450,height=90)
@@ -202,10 +186,10 @@ def page_2():
     img = img.resize((900,int(900*(867/1613))))
     renderimg = ImageTk.PhotoImage(img)
 
-    p1img = tk.Label(p2canvas, image=renderimg)
-    p1img.image = renderimg
-    p1img.place(relx=0.5,rely=0.45,anchor='center')
-    p1img['bd']=0
+    ppimg = tk.Label(p2canvas, image=renderimg)
+    ppimg.image = renderimg
+    ppimg.place(relx=0.5,rely=0.45,anchor='center')
+    ppimg['bd']=0
 
     text_slowpill = tk.Label(p2canvas,text='This red block is slowpill,\nit will be generated when you reach certain speed,\neat it to become slower. ',font=('Segoe Print',16),bd=2,relief='solid')
     text_slowpill.place(anchor='center',relx=0.6,rely=0.5,width=600,height=120)
@@ -217,21 +201,21 @@ def page_3():
     '''go to next level explained'''
     global menuscreen,root,screenWidth,screenHeight,gridSize
 
-    p2canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
-    p2canvas.place(x=0,y=0)
-    # p2canvas.lift()
+    p3canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
+    p3canvas.place(x=0,y=0)
+    # p3canvas.lift()
 
-    to_p2_button = tk.Button(p2canvas,text='Previous Page',command=page_2)
+    to_p2_button = tk.Button(p3canvas,text='Previous Page',command=page_2)
     to_p2_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
     to_p2_button.config(font=('Arial',18),bg='#ff0000',fg='white')
     to_p2_button.config(activebackground=to_p2_button['bg'],activeforeground=to_p2_button['fg'],bd=5,relief='raised')
 
-    to_menu_button = tk.Button(p2canvas,text='Menu',command=menu)
+    to_menu_button = tk.Button(p3canvas,text='Menu',command=menu)
     to_menu_button.place(anchor='s',relx=0.5,rely=1,width=130,height=60)
     to_menu_button.config(font=('Arial',18),bg='#0036ff',fg='white')
     to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=5,relief='raised')
     
-    to_p4_button = tk.Button(p2canvas,text='Next Page',command=page_4)
+    to_p4_button = tk.Button(p3canvas,text='Next Page',command=page_4)
     to_p4_button.place(anchor='se',relx=1,rely=1,width=150,height=60)
     to_p4_button.config(font=('Arial',18),bg='#ff0000',fg='white')
     to_p4_button.config(activebackground=to_p4_button['bg'],activeforeground=to_p4_button['fg'],bd=5,relief='raised')
@@ -240,19 +224,96 @@ def page_3():
     img = img.resize((900,int(900*(867/1613))))
     renderimg = ImageTk.PhotoImage(img)
 
-    p1img = tk.Label(p2canvas, image=renderimg)
-    p1img.image = renderimg
-    p1img.place(relx=0.5,rely=0.45,anchor='center')
-    p1img['bd']=0
+    ppimg = tk.Label(p3canvas, image=renderimg)
+    ppimg.image = renderimg
+    ppimg.place(relx=0.5,rely=0.45,anchor='center')
+    ppimg['bd']=0
 
-    text_slowpill = tk.Label(p2canvas,text='When you reach certain score,\na hole will appear,\ngo through the hole to enter the next level. ',font=('Segoe Print',16),bd=2,relief='solid')
+    text_slowpill = tk.Label(p3canvas,text='When you reach certain score,\na hole will appear,\ngo through the hole to enter the next level. ',font=('Segoe Print',16),bd=2,relief='solid')
     text_slowpill.place(anchor='center',relx=0.6,rely=0.6,width=550,height=120)
     text_slowpill.config(bg='#7ecd62',fg='black')
 
     root.update()
 
 def page_4():
-    pass
+    '''obstacle explained'''
+    global menuscreen,root,screenWidth,screenHeight,gridSize
+
+    p4canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
+    p4canvas.place(x=0,y=0)
+    # p4canvas.lift()
+
+    to_p3_button = tk.Button(p4canvas,text='Previous Page',command=page_3)
+    to_p3_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
+    to_p3_button.config(font=('Arial',18),bg='#ff0000',fg='white')
+    to_p3_button.config(activebackground=to_p3_button['bg'],activeforeground=to_p3_button['fg'],bd=5,relief='raised')
+
+    to_menu_button = tk.Button(p4canvas,text='Menu',command=menu)
+    to_menu_button.place(anchor='s',relx=0.5,rely=1,width=130,height=60)
+    to_menu_button.config(font=('Arial',18),bg='#0036ff',fg='white')
+    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=5,relief='raised')
+    
+    to_p5_button = tk.Button(p4canvas,text='Next Page',command=page_5)
+    to_p5_button.place(anchor='se',relx=1,rely=1,width=150,height=60)
+    to_p5_button.config(font=('Arial',18),bg='#ff0000',fg='white')
+    to_p5_button.config(activebackground=to_p5_button['bg'],activeforeground=to_p5_button['fg'],bd=5,relief='raised')
+
+    img = Image.open("obstaclepic.png")
+    img = img.resize((900,int(900*(867/1613))))
+    renderimg = ImageTk.PhotoImage(img)
+
+    ppimg = tk.Label(p4canvas, image=renderimg)
+    ppimg.image = renderimg
+    ppimg.place(relx=0.5,rely=0.45,anchor='center')
+    ppimg['bd']=0
+
+    text_obstacle = tk.Label(p4canvas,text="This big blue thing is obstacle,\nyou die if you touch it.\nYou'll also die if you touch the blue parameters.",font=('Segoe Print',16),bd=2,relief='solid')
+    text_obstacle.place(anchor='center',relx=0.6,rely=0.75,width=550,height=120)
+    text_obstacle.config(bg='#7ecd62',fg='black')
+
+    root.update()
+
+def page_5():
+    '''boss explained'''
+    global menuscreen,root,screenWidth,screenHeight,gridSize
+
+    p5canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
+    p5canvas.place(x=0,y=0)
+    # p5canvas.lift()
+
+    to_p4_button = tk.Button(p5canvas,text='Previous Page',command=page_4)
+    to_p4_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
+    to_p4_button.config(font=('Arial',18),bg='#ff0000',fg='white')
+    to_p4_button.config(activebackground=to_p4_button['bg'],activeforeground=to_p4_button['fg'],bd=5,relief='raised')
+
+    to_menu_button = tk.Button(p5canvas,text='Menu',command=menu)
+    to_menu_button.place(anchor='s',relx=0.5,rely=1,width=130,height=60)
+    to_menu_button.config(font=('Arial',18),bg='#0036ff',fg='white')
+    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=5,relief='raised')
+    
+    to_p6_button = tk.Button(p5canvas,text='Next Page',command=page_6)
+    to_p6_button.place(anchor='se',relx=1,rely=1,width=150,height=60)
+    to_p6_button.config(font=('Arial',18),bg='#ff0000',fg='white')
+    to_p6_button.config(activebackground=to_p6_button['bg'],activeforeground=to_p6_button['fg'],bd=5,relief='raised')
+
+    img = Image.open("aisnakepic.png")
+    img = img.resize((900,int(900*(867/1613))))
+    renderimg = ImageTk.PhotoImage(img)
+
+    ppimg = tk.Label(p5canvas, image=renderimg)
+    ppimg.image = renderimg
+    ppimg.place(relx=0.5,rely=0.45,anchor='center')
+    ppimg['bd']=0
+
+    text_levelsexplain = tk.Label(p5canvas,text="This game has 4 level,\n1st level: normal snake game\n2nd level: fixed obstacle\n3rd level: falling obstacles\nfinal level: boss-AI snake.",font=('Segoe Print',16),bd=2,relief='solid')
+    text_levelsexplain.place(anchor='center',relx=0.3,rely=0.3,width=370,height=200)
+    text_levelsexplain.config(bg='#7ecd62',fg='black')
+
+    text_aisnake = tk.Label(p5canvas,text="This purple snake is the boss - AI snake.\nIt will follow you,\nand you'll lose health if it touches you.\n(your health = your length)",font=('Segoe Print',16),bd=2,relief='solid')
+    text_aisnake.place(anchor='center',relx=0.7,rely=0.7,width=470,height=180)
+    text_aisnake.config(bg='#7ecd62',fg='black')
+
+    root.update()
 
 def tutorials():
     tutor = TutorialsPages()
@@ -402,7 +463,7 @@ def level_1():
     global tail_length, next_level_unlocked, x_player, y_player,obstacle,screenHeight,\
     screenWidth,gridSize,level_2,delay,level_common,obstacle_index
 
-    if tail_length == 11: #score = 10
+    if tail_length == 2: #score = 10
         next_level_unlocked = True
 
     level_common(level_1,level_2)
