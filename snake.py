@@ -14,13 +14,13 @@ def main():
     moving_obs_y_1,moving_obs_y_2,moving_obstacle,bullet_pos_n_dir,\
     isEaten_ammunition,generate_ammunition,ammunition_count,snakey,ticks,root,\
     play_button,difficlulty_button,tutorial_button,x_slowpill,y_slowpill,x_ammunition,y_ammunition,\
-    blackk,aisnake_length,init_delay
+    blackk,aisnake_length,init_delay,aisnake_speed,ragemode_length
 
     blackk.lift()
 
     #initial variable
     game_speed = 5
-    
+
     try:
         delay = init_delay
     except:
@@ -564,8 +564,8 @@ def obstacle(x,y,w,h,index):
         l_obs_h[index] = h
 
 def generate_food_pos():
-    global x_food, y_food, bodies, screenWidth, screenHeight, gridSize,\
-    l_obs_x,l_obs_y,l_obs_w,l_obs_h
+    global x_food,y_food,x_ammunition,y_ammunition,x_slowpill,y_slowpill,bodies,\
+    screenWidth, screenHeight, gridSize,l_obs_x,l_obs_y,l_obs_w,l_obs_h
     x_food = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
     y_food = random.randint(1, screenHeight/gridSize - 2) * gridSize # make it only generate in parameter
 
@@ -576,14 +576,18 @@ def generate_food_pos():
             # print('fucku')
             x_food = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
             y_food = random.randint(1, screenHeight/gridSize - 2) * gridSize # make it only generate in parameter
-    # print(x_food,y_food)
+
+    if x_food == x_slowpill and y_food == y_slowpill or x_food == x_ammunition and y_food == y_ammunition:
+        x_food = random.randint(1, screenWidth/gridSize - 2) * gridSize
+        y_food = random.randint(1, screenHeight/gridSize - 2) * gridSize
+
     return x_food, y_food
 
 #same as a food except speed set back to default when eaten
 def generate_slowpill_pos():
     '''a pill that make u move slower'''
-    global x_slowpill, y_slowpill, bodies, screenWidth, screenHeight, gridSize,\
-    l_obs_x,l_obs_y,l_obs_w,l_obs_h
+    global x_food,y_food,x_ammunition,y_ammunition,x_slowpill,y_slowpill,bodies,\
+    screenWidth, screenHeight, gridSize,l_obs_x,l_obs_y,l_obs_w,l_obs_h
     x_slowpill = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
     y_slowpill = random.randint(1, screenHeight/gridSize - 2) * gridSize # make it only generate in parameter
 
@@ -593,6 +597,10 @@ def generate_slowpill_pos():
              and obs_y*gridSize < (y_slowpill*2+gridSize)/2 < (obs_y+obs_h)*gridSize):
             x_slowpill = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
             y_slowpill = random.randint(1, screenHeight/gridSize - 2) * gridSize # make it only generate in parameter
+    if x_slowpill == x_food and y_slowpill == y_food or x_slowpill == x_ammunition and y_slowpill == y_ammunition:
+        x_slowpill = random.randint(1, screenWidth/gridSize - 2) * gridSize
+        y_slowpill = random.randint(1, screenHeight/gridSize - 2) * gridSize
+
     return x_slowpill, y_slowpill
 
 def level_1():
@@ -793,8 +801,9 @@ def bullet_move():
 
 def generate_ammunition_pos():
     '''ammunition'''
-    global x_ammunition, y_ammunition, bodies, screenWidth, screenHeight, gridSize,\
-    l_obs_x,l_obs_y,l_obs_w,l_obs_h
+    global x_food,y_food,x_ammunition,y_ammunition,x_slowpill,y_slowpill,\
+    bodies, screenWidth, screenHeight, gridSize,l_obs_x,l_obs_y,l_obs_w,l_obs_h
+
     x_ammunition = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
     y_ammunition = random.randint(1, screenHeight/gridSize - 2) * gridSize # make it only generate in parameter
 
@@ -804,6 +813,10 @@ def generate_ammunition_pos():
              and obs_y*gridSize < (y_ammunition*2+gridSize)/2 < (obs_y+obs_h)*gridSize):
             x_ammunition = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
             y_ammunition = random.randint(1, screenHeight/gridSize - 2) * gridSize # make it only generate in parameter
+    if x_ammunition == x_slowpill and y_ammunition == y_slowpill or x_ammunition == x_food and y_ammunition == y_food:
+        x_ammunition = random.randint(1, screenWidth/gridSize - 2) * gridSize
+        y_ammunition = random.randint(1, screenHeight/gridSize - 2) * gridSize
+
     return x_ammunition, y_ammunition
 
 
@@ -936,7 +949,7 @@ def snake_game():
 
         screen.fill((0, 0, 0))
 
-        print(delay)
+        # print(delay)
 
         #start_time updates as long as snake doensn't leave (i.e. move)
         if x_player == 1*gridSize and y_player == 1*gridSize:
