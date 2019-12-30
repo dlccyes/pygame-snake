@@ -610,7 +610,7 @@ def level_1():
     global tail_length, next_level_unlocked, x_player, y_player,obstacle,screenHeight,\
     screenWidth,gridSize,level_2,delay,level_common,obstacle_index
 
-    if tail_length == 2: #score = 10
+    if tail_length == 11: #score = 10
         next_level_unlocked = True
 
     level_common(level_1,level_2)
@@ -620,7 +620,7 @@ def level_2():
     global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
     screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common,obstacle_index
 
-    if tail_length == 2: #score = 10
+    if tail_length == 11: #score = 10
         next_level_unlocked = True
         obstacle(0,0,0,0,obstacle_index['level2_obstacle'])
     else:
@@ -638,7 +638,7 @@ def level_3():
     screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common,obstacle_index,\
     moving_obs_y_1,moving_obs_y_2,moving_obstacle
 
-    if tail_length == 2: #score = 10
+    if tail_length == 11: #score = 10
         next_level_unlocked = True
         obstacle(0,0,0,0,obstacle_index['level3_moving_obstacle_1'])
         obstacle(0,0,0,0,obstacle_index['level3_moving_obstacle_2'])
