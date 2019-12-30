@@ -3,6 +3,7 @@ import random
 import sys
 import time
 import tkinter as tk
+import os
 
 def main():
     global screenWidth,screenHeight,game_speed,gridSize,delay,\
@@ -10,8 +11,13 @@ def main():
     isEaten_slowpill,generate_slowpill,colordict,next_level_unlocked,\
     generate_food, l_obs_x,l_obs_y,l_obs_w,l_obs_h,dict_level,total_score,obstacle_index,\
     moving_obs_y_1,moving_obs_y_2,moving_obstacle,bullet_pos_n_dir,\
-    isEaten_ammunition,generate_ammunition,ammunition_count,snakey,ticks
-    
+    isEaten_ammunition,generate_ammunition,ammunition_count,snakey,ticks,root,\
+    play_button,options_button,tutorial_button,x_slowpill,y_slowpill,x_ammunition,y_ammunition
+
+    play_button.destroy()
+    options_button.destroy()
+    tutorial_button.destroy()
+
     pygame.init()
 
     screenWidth = 1080
@@ -32,9 +38,13 @@ def main():
     isEaten_food = True
     generate_food = True
     #slowpill
+    x_slowpill = 0
+    y_slowpill = 0
     isEaten_slowpill = True
     generate_slowpill = False
     #ammunition
+    x_ammunition = 0
+    y_ammunition = 0
     isEaten_ammunition = True
     generate_ammunition = True
     ammunition_count = 0
@@ -58,24 +68,58 @@ def main():
 
     snake_game()
 
-class tkbutton():
-    global menuscreen
-    def __init__(self,x,y,w,h,text,command):
-        self = tk.Button(menuscreen,text=text,command=command)
-        self.place(x=x,y=y,width=w,height=h)
-        self.config(font=('Arial',32),bg='blue',fg='white')
-        self.config(activebackground=self['bg'],activeforeground=self['fg'],bd=5,relief='raised')
-def menu():
-    global menuscreen
-    menuscreen = tk.Tk()
-    menuscreen.title('Snake')
-    menuscreen.geometry('1080x600')
-    menuscreen['bg'] = 'black'
+# class tkbutton():
+#     global menuscreen
+#     def __init__(self,x,y,w,h,text,command):
+#         self = tk.Button(menuscreen,text=text,command=command)
+#         self.place(x=x,y=y,width=w,height=h)
+#         self.config(font=('Arial',32),bg='blue',fg='white')
+#         self.config(activebackground=self['bg'],activeforeground=self['fg'],bd=5,relief='raised')
+        
+        # if into_game == True:
+        #     self.place_forget()
+        # else:
+        #     pass
 
-    options_button = tkbutton(200,350,200,100,'Options',options)
-    tutorial_button = tkbutton(600,350,200,100,'Tutorials',tutorials)
+def menu():
+    global menuscreen,play_button,options_button,tutorial_button,root
+    root = tk.Tk()
+    root.title('Snake')
+    root.geometry('1080x600')
+    root['bg'] = 'black'
+
+    menuscreen = tk.Frame(root,width=1080,height=600,bg='black')
+    menuscreen.pack()
+
+    # use class tkbuttons but hard to use in other functions
+    # play_button = tkbutton(300,200,400,100,'Play',main)
+    # options_button = tkbutton(200,350,200,100,'Options',options)
+    # tutorial_button = tkbutton(600,350,200,100,'Tutorials',tutorials)
+
+    #buttons
+    play_button = tk.Button(menuscreen,text='Play',command=main)
+    options_button = tk.Button(menuscreen,text='Options',command=options)
+    tutorial_button = tk.Button(menuscreen,text='Tutorials',command=tutorials)
+
+    play_button.place(x=300,y=200,width=400,height=100)
+    play_button.config(font=('Arial',32),bg='blue',fg='white')
+    play_button.config(activebackground=play_button['bg'],activeforeground=play_button['fg'],bd=5,relief='raised')
+
+    options_button.place(x=200,y=350,width=200,height=100)
+    options_button.config(font=('Arial',32),bg='blue',fg='white')
+    options_button.config(activebackground=options_button['bg'],activeforeground=options_button['fg'],bd=5,relief='raised')
+
+    tutorial_button.place(x=600,y=350,width=200,height=100)
+    tutorial_button.config(font=('Arial',32),bg='blue',fg='white')
+    tutorial_button.config(activebackground=tutorial_button['bg'],activeforeground=tutorial_button['fg'],bd=5,relief='raised')
+
+    # root.update()
+
+    #embed the window
+    # os.environ['SDL_WINDOWID'] = str(menuscreen.winfo_id())
+    # os.environ['SDL_VIDEODRIVER'] = 'windib'
  
-    menuscreen.mainloop()
+    root.mainloop()
 
 def options():
     pass
@@ -277,7 +321,7 @@ def level_4():
     """level 4 - meet boss"""
     global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
     screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common,obstacle_index,\
-    keys,x_ammunition,y_ammunition,snakey,ticks,total_score,bodies
+    keys,x_ammunition,y_ammunition,snakey,ticks,total_score,bodies,x_food,y_food,x_slowpill,y_slowpill
     # if game_finished == True: #score = 10
     #     next_level_unlocked = True
     # else:
@@ -301,13 +345,27 @@ def level_4():
     if snakey.length <= 5:
         snakey.rage_mode()
     # print(bodies,snakey.bodies)
+
+    # if user touches AI snake
     for body in bodies:
         for ai_body in snakey.bodies:
             if (body[0] < ai_body[0]+gridSize/2 < body[0] + gridSize
                 and body[1] < ai_body[1]+gridSize/2 < body[1] + gridSize):
                 tail_length -= 1
-                print('shot!!')
-
+                print('stabbed!!')
+                total_score -= 1
+    
+    # when AI snake touches the "foods", they generate elsewhere
+    for ai_body in snakey.bodies:
+        if x_food == ai_body[0] and y_food == ai_body[1]:
+            x_food = random.randint(1, screenWidth/gridSize - 2) * gridSize
+            y_food = random.randint(1, screenHeight/gridSize - 2) * gridSize
+        if x_slowpill == ai_body[0] and y_slowpill == ai_body[1]:
+            x_slowpill = random.randint(1, screenWidth/gridSize - 2) * gridSize
+            y_slowpill = random.randint(1, screenHeight/gridSize - 2) * gridSize
+        if x_ammunition == ai_body[0] and y_ammunition == ai_body[1]:
+            x_ammunition = random.randint(1, screenWidth/gridSize - 2) * gridSize
+            y_ammunition = random.randint(1, screenHeight/gridSize - 2) * gridSize
 
     level_common(level_4,level_5)
 
@@ -567,7 +625,7 @@ def snake_game():
     generate_food, next_level_unlocked,l_obs_x,l_obs_y,l_obs_w,l_obs_h,level_1,level_2,\
     total_score,obstacle_index,bullet_pos_n_dir,up,down,right,left,velocity,keys,\
     isEaten_ammunition,generate_ammunition,x_ammunition, y_ammunition,ammunition_count,\
-    ticks,game_time
+    ticks,game_time,root
     
     screen = pygame.display.set_mode((screenWidth, screenHeight))
 
@@ -775,6 +833,7 @@ def snake_game():
 
         #update the screen
         pygame.display.update()
+        root.update()
 
 if __name__ == '__main__':
     # main()
