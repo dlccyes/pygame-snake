@@ -16,13 +16,7 @@ def main():
     play_button,options_button,tutorial_button,x_slowpill,y_slowpill,x_ammunition,y_ammunition,\
     blackk
 
-    # play_button.destroy()
-    # options_button.destroy()
-    # tutorial_button.destroy()
-
     blackk.lift()
-
-    # pygame.init()
 
     #initial variable
     game_speed = 5
@@ -65,22 +59,7 @@ def main():
 
     snakey = AISnake(pos=(screenWidth-gridSize,(screenHeight/gridSize-1)//2*gridSize),length=10)
 
-    # menu()
-
     snake_game()
-
-# class tkbutton:
-#     global menuscreen
-#     def __init__(self,x,y,w,h,text,command):
-#         self = tk.Button(menuscreen,text=text,command=command)
-#         self.place(x=x,y=y,width=w,height=h)
-#         self.config(font=('Arial',32),bg='blue',fg='white')
-#         self.config(activebackground=self['bg'],activeforeground=self['fg'],bd=5,relief='raised')
-        
-        # if into_game == True:
-        #     self.place_forget()
-        # else:
-        #     pass
 
 def initial():
     global root,screenWidth,screenHeight,gridSize,menuscreen
@@ -91,10 +70,9 @@ def initial():
 
     root = tk.Tk()
     root.title('Snake')
-    root.geometry(f'{screenWidth}x{screenHeight}')
+    root.geometry(f'{screenWidth}x{screenHeight}-100+10')
     root['bg'] = 'black'
     
-
     menu()
 
 def restart():
@@ -162,7 +140,9 @@ def options():
     pass
 
 def page_1():
-    global menuscreen,root,screenWidth,screenHeight,gridSize,blackk
+    '''controls & food explained'''
+    global menuscreen,root,screenWidth,screenHeight,gridSize
+
     p1canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
     p1canvas.place(x=0,y=0)
 
@@ -196,10 +176,9 @@ def page_1():
     root.update()
 
 def page_2():
-    global menuscreen,root,screenWidth,screenHeight,gridSize,blackk
+    '''slowpill explained'''
+    global menuscreen,root,screenWidth,screenHeight,gridSize
 
-    print('yep')
-    blackk.lift()
     p2canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
     p2canvas.place(x=0,y=0)
     # p2canvas.lift()
@@ -235,6 +214,44 @@ def page_2():
     root.update()
 
 def page_3():
+    '''go to next level explained'''
+    global menuscreen,root,screenWidth,screenHeight,gridSize
+
+    p2canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
+    p2canvas.place(x=0,y=0)
+    # p2canvas.lift()
+
+    to_p2_button = tk.Button(p2canvas,text='Previous Page',command=page_2)
+    to_p2_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
+    to_p2_button.config(font=('Arial',18),bg='#ff0000',fg='white')
+    to_p2_button.config(activebackground=to_p2_button['bg'],activeforeground=to_p2_button['fg'],bd=5,relief='raised')
+
+    to_menu_button = tk.Button(p2canvas,text='Menu',command=menu)
+    to_menu_button.place(anchor='s',relx=0.5,rely=1,width=130,height=60)
+    to_menu_button.config(font=('Arial',18),bg='#0036ff',fg='white')
+    to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=5,relief='raised')
+    
+    to_p4_button = tk.Button(p2canvas,text='Next Page',command=page_4)
+    to_p4_button.place(anchor='se',relx=1,rely=1,width=150,height=60)
+    to_p4_button.config(font=('Arial',18),bg='#ff0000',fg='white')
+    to_p4_button.config(activebackground=to_p4_button['bg'],activeforeground=to_p4_button['fg'],bd=5,relief='raised')
+
+    img = Image.open("nextlevelpic.png")
+    img = img.resize((900,int(900*(867/1613))))
+    renderimg = ImageTk.PhotoImage(img)
+
+    p1img = tk.Label(p2canvas, image=renderimg)
+    p1img.image = renderimg
+    p1img.place(relx=0.5,rely=0.45,anchor='center')
+    p1img['bd']=0
+
+    text_slowpill = tk.Label(p2canvas,text='When you reach certain score,\na hole will appear,\ngo through the hole to enter the next level. ',font=('Segoe Print',16),bd=2,relief='solid')
+    text_slowpill.place(anchor='center',relx=0.6,rely=0.6,width=550,height=120)
+    text_slowpill.config(bg='#7ecd62',fg='black')
+
+    root.update()
+
+def page_4():
     pass
 
 def tutorials():
