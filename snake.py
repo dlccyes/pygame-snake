@@ -14,7 +14,7 @@ def main():
     moving_obs_y_1,moving_obs_y_2,moving_obstacle,bullet_pos_n_dir,\
     isEaten_ammunition,generate_ammunition,ammunition_count,snakey,ticks,root,\
     play_button,difficlulty_button,tutorial_button,x_slowpill,y_slowpill,x_ammunition,y_ammunition,\
-    blackk,aisnake_length,init_delay,aisnake_speed,ragemode_length
+    blackk,aisnake_length,init_delay,aisnake_speed,ragemode_length,score_multiplier
 
     blackk.lift()
 
@@ -29,6 +29,7 @@ def main():
         ragemode_length = 3
         aisnake_speed = 4
         delay = init_delay
+        score_multiplier = 1
 
     x_player = 1*gridSize #snake's head's x pos
     y_player = 1*gridSize #snake's head's y pos
@@ -118,7 +119,7 @@ def menu():
     tutorial_button = tk.Button(menuscreen,text='Tutorials',command=page_1)
 
     play_button.place(anchor='center',relx=0.18,rely=0.87,width=280,height=120)
-    play_button.config(font=('Arial',38),bg='#0036ff',fg='white')
+    play_button.config(font=('Arial',48),bg='#0036ff',fg='white')
     play_button.config(activebackground=play_button['bg'],activeforeground=play_button['fg'],bd=3,relief='raised')
 
     difficlulty_button.place(anchor='center',relx=0.6,rely=0.87,width=200,height=100)
@@ -150,25 +151,27 @@ def difficlulty():
     hard_button.config(font=('Arial',30),bg='#ff0000',fg='white')
     hard_button.config(activebackground=hard_button['bg'],activeforeground=hard_button['fg'],bd=3,relief='raised')
 
-    easy_button = tk.Button(difficlultycanvas,text='Easy',command=easy)
+    easy_button = tk.Button(difficlultycanvas,text='Default',command=easy)
     easy_button.place(anchor='s',relx=0.5,rely=0.8,width=200,height=100)
     easy_button.config(font=('Arial',30),bg='#ff0000',fg='white')
     easy_button.config(activebackground=easy_button['bg'],activeforeground=easy_button['fg'],bd=3,relief='raised')
 
 def hard():
-    global init_delay,aisnake_length,aisnake_speed,ragemode_length
+    global init_delay,aisnake_length,aisnake_speed,ragemode_length,score_multiplier
     init_delay = 120
     aisnake_length = 10
     ragemode_length = 5
     aisnake_speed = 2
+    score_multiplier = 2
     menu()
 
 def easy():
-    global init_delay,aisnake_length,aisnake_speed,ragemode_length
+    global init_delay,aisnake_length,aisnake_speed,ragemode_length,score_multiplier
     init_delay = 140
     aisnake_length = 6
     ragemode_length = 3
     aisnake_speed = 4
+    score_multiplier = 1
     menu()
 
 def page_1():
@@ -201,7 +204,7 @@ def page_1():
     text_you.place(anchor='center',relx=0.25,rely=0.27,width=450,height=90)
     text_you.config(bg='#7ecd62',fg='black')
 
-    text_food = tk.Label(p1canvas,text='This yellow block is food, eat it to become longer, \nand your score will +1.\nThe speed will also become faster.',font=('Segoe Print',16),bd=2,relief='solid')
+    text_food = tk.Label(p1canvas,text='This yellow block is food, eat it to become longer, \nand your score will +1 (+2 for Hard mode).\nThe speed will also become faster.',font=('Segoe Print',16),bd=2,relief='solid')
     text_food.place(anchor='center',relx=0.6,rely=0.68,width=580,height=140)
     text_food.config(bg='#7ecd62',fg='black')
 
@@ -239,7 +242,7 @@ def page_2():
     ppimg.place(relx=0.5,rely=0.45,anchor='center')
     ppimg['bd']=0
 
-    text_slowpill = tk.Label(p2canvas,text='This red block is slowpill,\nit will be generated when you reach certain speed,\neat it to become slower. ',font=('Segoe Print',16),bd=2,relief='solid')
+    text_slowpill = tk.Label(p2canvas,text='This red block is slowpill,\nit will be generated when you reach a certain speed,\neat it to become slower. ',font=('Segoe Print',16),bd=2,relief='solid')
     text_slowpill.place(anchor='center',relx=0.6,rely=0.5,width=600,height=120)
     text_slowpill.config(bg='#7ecd62',fg='black')
 
@@ -277,7 +280,7 @@ def page_3():
     ppimg.place(relx=0.5,rely=0.45,anchor='center')
     ppimg['bd']=0
 
-    text_slowpill = tk.Label(p3canvas,text='When you reach certain score,\na hole will appear,\ngo through the hole to enter the next level. ',font=('Segoe Print',16),bd=2,relief='solid')
+    text_slowpill = tk.Label(p3canvas,text='When you reach a certain score,\na hole will appear,\ngo through the hole to enter the next level. ',font=('Segoe Print',16),bd=2,relief='solid')
     text_slowpill.place(anchor='center',relx=0.6,rely=0.6,width=550,height=120)
     text_slowpill.config(bg='#7ecd62',fg='black')
 
@@ -357,8 +360,8 @@ def page_5():
     text_levelsexplain.place(anchor='center',relx=0.3,rely=0.3,width=370,height=200)
     text_levelsexplain.config(bg='#7ecd62',fg='black')
 
-    text_aisnake = tk.Label(p5canvas,text="This purple snake is the boss - AI snake.\nIt will follow you,\nand you'll lose health if it touches you.\n(your health = your length)",font=('Segoe Print',16),bd=2,relief='solid')
-    text_aisnake.place(anchor='center',relx=0.7,rely=0.7,width=470,height=180)
+    text_aisnake = tk.Label(p5canvas,text="This purple snake is the boss - AI snake.\nIt will follow you,\nand you'll lose health (also score) if it touches you.\n(your health = your length)",font=('Segoe Print',16),bd=2,relief='solid')
+    text_aisnake.place(anchor='center',relx=0.7,rely=0.7,width=560,height=180)
     text_aisnake.config(bg='#7ecd62',fg='black')
 
     root.update()
@@ -399,8 +402,8 @@ def page_6():
     text_ammunition.place(anchor='center',relx=0.75,rely=0.22,width=450,height=130)
     text_ammunition.config(bg='#7ecd62',fg='black')
 
-    text_fireball = tk.Label(p6canvas,text="Press space to fire a fireball.\nIf the fireball hit the boss, boss's health will -1.",font=('Segoe Print',16),bd=2,relief='solid')
-    text_fireball.place(anchor='center',relx=0.3,rely=0.62,width=550,height=85)
+    text_fireball = tk.Label(p6canvas,text="Press space to fire a fireball.\nIf the fireball hit the boss, boss's health will -1,\n and your score will +2 (+4 for Hard mode)",font=('Segoe Print',16),bd=2,relief='solid')
+    text_fireball.place(anchor='center',relx=0.3,rely=0.65,width=550,height=120)
     text_fireball.config(bg='#7ecd62',fg='black')
 
     text_fireballicon = tk.Label(p6canvas,text="This shows how many fireballs you can shoot.",font=('Segoe Print',16),bd=2,relief='solid')
@@ -410,7 +413,7 @@ def page_6():
     root.update()
 
 def page_7():
-    '''rage mode'''
+    '''rage mode explained'''
     global menuscreen,root,screenWidth,screenHeight,gridSize
 
     p7canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
@@ -441,7 +444,7 @@ def page_7():
     ppimg.place(relx=0.5,rely=0.45,anchor='center')
     ppimg['bd']=0
 
-    text_levelsexplain = tk.Label(p7canvas,text='When the boss is below certain health,\n"rage mode" will be activated.\nIt will 甩尾, and thus you\'re more likely to be hit.',font=('Segoe Print',16),bd=2,relief='solid')
+    text_levelsexplain = tk.Label(p7canvas,text='When the boss is below a certain health,\n"rage mode" will be activated.\nIt will 甩尾, and thus you\'re more likely to be hit.',font=('Segoe Print',16),bd=2,relief='solid')
     text_levelsexplain.place(anchor='center',relx=0.4,rely=0.25,width=560,height=130)
     text_levelsexplain.config(bg='#7ecd62',fg='black')
 
@@ -887,7 +890,7 @@ class AISnake:
 
     def lose_health(self):
         '''lose health(length) when hit by fireball(bullet)'''
-        global total_score,sot_text,sot_time
+        global total_score,sot_text,sot_time,score_multiplier
 
         for pos in list(bullet_pos_n_dir.keys()):
             for body in self.bodies:
@@ -901,7 +904,7 @@ class AISnake:
                     sot_text = font.render('Shot on target!', True, colordict['black'])
                     sot_time = game_time//1000
 
-                    total_score += 2
+                    total_score += 2**score_multiplier
                     del bullet_pos_n_dir[pos]
 
     def if_die(self):
@@ -942,7 +945,7 @@ def snake_game():
     generate_food, next_level_unlocked,l_obs_x,l_obs_y,l_obs_w,l_obs_h,level_1,level_2,\
     total_score,obstacle_index,bullet_pos_n_dir,up,down,right,left,velocity,keys,\
     isEaten_ammunition,generate_ammunition,x_ammunition, y_ammunition,ammunition_count,\
-    ticks,game_time,root,init_delay,sot_text,sot_time,stabbed_text,stabbed_time
+    ticks,game_time,root,init_delay,sot_text,sot_time,stabbed_text,stabbed_time,score_multiplier
     
     screen = pygame.display.set_mode((screenWidth, screenHeight))
 
@@ -1072,7 +1075,7 @@ def snake_game():
             if generate_food == True and (x_player, y_player) == (x_food, y_food):
                 isEaten_food = True
                 tail_length += 1
-                total_score += 1
+                total_score += 1*score_multiplier
 
             #slowpill
             if isEaten_slowpill == True and delay < init_delay-20 - score_now:
@@ -1148,11 +1151,11 @@ def snake_game():
             bullet_image = pygame.transform.scale(bullet_image,(30,30))
             bullet_image.convert()
             if ammunition_count >= 1:
-                screen.blit(bullet_image,(120,6))
-            if ammunition_count >= 2:
                 screen.blit(bullet_image,(135,6))
-            if ammunition_count == 3:
+            if ammunition_count >= 2:
                 screen.blit(bullet_image,(150,6))
+            if ammunition_count == 3:
+                screen.blit(bullet_image,(165,6))
 
         try:
             if game_time//1000 - sot_time <= 1 and print_stabbed == False:
