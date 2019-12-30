@@ -659,7 +659,7 @@ def level_4():
     global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
     screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common,obstacle_index,\
     keys,x_ammunition,y_ammunition,snakey,ticks,total_score,bodies,x_food,y_food,x_slowpill,y_slowpill,\
-    aisnake_speed,ragemode_length
+    aisnake_speed,ragemode_length,stabbed_text,stabbed_time
     # if game_finished == True: #score = 10
     #     next_level_unlocked = True
     # else:
@@ -690,7 +690,13 @@ def level_4():
             if (body[0] < ai_body[0]+gridSize/2 < body[0] + gridSize
                 and body[1] < ai_body[1]+gridSize/2 < body[1] + gridSize):
                 tail_length -= 1
-                print('stabbed!!')
+                # print('stabbed!!')
+
+                #show "You're hurt!" when hurt by aisnake
+                font = pygame.font.SysFont('Segoe UI Black', 25)
+                stabbed_text = font.render("You're hurt!", True, colordict['black'])
+                stabbed_time = game_time//1000
+
                 total_score -= 1
     
     # when AI snake touches the "foods", they generate elsewhere
@@ -881,13 +887,20 @@ class AISnake:
 
     def lose_health(self):
         '''lose health(length) when hit by fireball(bullet)'''
-        global total_score
+        global total_score,sot_text,sot_time
+
         for pos in list(bullet_pos_n_dir.keys()):
             for body in self.bodies:
                 if (body[0] < pos[0]+gridSize/2 < body[0]+gridSize
                     and body[1] < pos[1]+gridSize/2 < body[1]+gridSize):
                     self.length -= 1
-                    print('yeah')
+                    # print('yeah')
+
+                    # show 'Shot on target!' when hurt aisnake
+                    font = pygame.font.SysFont('Segoe UI Black', 25)
+                    sot_text = font.render('Shot on target!', True, colordict['black'])
+                    sot_time = game_time//1000
+
                     total_score += 2
                     del bullet_pos_n_dir[pos]
 
@@ -929,7 +942,7 @@ def snake_game():
     generate_food, next_level_unlocked,l_obs_x,l_obs_y,l_obs_w,l_obs_h,level_1,level_2,\
     total_score,obstacle_index,bullet_pos_n_dir,up,down,right,left,velocity,keys,\
     isEaten_ammunition,generate_ammunition,x_ammunition, y_ammunition,ammunition_count,\
-    ticks,game_time,root,init_delay
+    ticks,game_time,root,init_delay,sot_text,sot_time,stabbed_text,stabbed_time
     
     screen = pygame.display.set_mode((screenWidth, screenHeight))
 
@@ -940,6 +953,8 @@ def snake_game():
     left = False
 
     score_now = 0 #for determining the generate slowpill threshold
+
+    print_sot,print_stabbed = False,False
 
     while isGame :
         ticks += 1
@@ -1138,6 +1153,24 @@ def snake_game():
                 screen.blit(bullet_image,(135,6))
             if ammunition_count == 3:
                 screen.blit(bullet_image,(150,6))
+
+        try:
+            if game_time//1000 - sot_time <= 1 and print_stabbed == False:
+                screen.blit(sot_text, (300, 3))
+                print_sot = True
+            else:
+                print_sot = False
+        except:
+            pass
+
+        try:
+            if game_time//1000 - stabbed_time <= 1 and print_sot == False:
+                screen.blit(stabbed_text, (300, 3))
+                print_stabbed = True
+            else:
+                print_stabbed = False
+        except:
+            pass
 
         #update the screen
         pygame.display.update()
