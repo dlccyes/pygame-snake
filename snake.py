@@ -13,14 +13,23 @@ def main():
     generate_food, l_obs_x,l_obs_y,l_obs_w,l_obs_h,dict_level,total_score,obstacle_index,\
     moving_obs_y_1,moving_obs_y_2,moving_obstacle,bullet_pos_n_dir,\
     isEaten_ammunition,generate_ammunition,ammunition_count,snakey,ticks,root,\
-    play_button,options_button,tutorial_button,x_slowpill,y_slowpill,x_ammunition,y_ammunition,\
-    blackk
+    play_button,difficlulty_button,tutorial_button,x_slowpill,y_slowpill,x_ammunition,y_ammunition,\
+    blackk,aisnake_length,init_delay
 
     blackk.lift()
 
     #initial variable
     game_speed = 5
-    delay = 140
+    
+    try:
+        delay = init_delay
+    except:
+        init_delay = 140
+        aisnake_length = 6
+        ragemode_length = 3
+        aisnake_speed = 4
+        delay = init_delay
+
     x_player = 1*gridSize #snake's head's x pos
     y_player = 1*gridSize #snake's head's y pos
     bodies = list()
@@ -57,7 +66,7 @@ def main():
     bullet_pos_n_dir = dict()
     ticks = 0 #total loop counts
 
-    snakey = AISnake(pos=(screenWidth-gridSize,(screenHeight/gridSize-1)//2*gridSize),length=10)
+    snakey = AISnake(pos=(screenWidth-gridSize,(screenHeight/gridSize-1)//2*gridSize),length=aisnake_length)
 
     snake_game()
 
@@ -80,7 +89,7 @@ def restart():
     menu()
 
 def menu():
-    global menuscreen,play_button,options_button,tutorial_button,root,\
+    global menuscreen,play_button,difficlulty_button,tutorial_button,root,\
     screenWidth,screenHeight,gridSize,to_menu_button,blackk
 
     # if menuscreen exist → do nothing
@@ -105,16 +114,16 @@ def menu():
 
     #buttons
     play_button = tk.Button(menuscreen,text='Play',command=main)
-    options_button = tk.Button(menuscreen,text='Options',command=options)
+    difficlulty_button = tk.Button(menuscreen,text='Difficulty',command=difficlulty)
     tutorial_button = tk.Button(menuscreen,text='Tutorials',command=page_1)
 
     play_button.place(anchor='center',relx=0.18,rely=0.87,width=280,height=120)
     play_button.config(font=('Arial',38),bg='#0036ff',fg='white')
     play_button.config(activebackground=play_button['bg'],activeforeground=play_button['fg'],bd=3,relief='raised')
 
-    options_button.place(anchor='center',relx=0.6,rely=0.87,width=200,height=100)
-    options_button.config(font=('Arial',30),bg='#ff7000',fg='white')
-    options_button.config(activebackground=options_button['bg'],activeforeground=options_button['fg'],bd=3,relief='raised')
+    difficlulty_button.place(anchor='center',relx=0.6,rely=0.87,width=200,height=100)
+    difficlulty_button.config(font=('Arial',30),bg='#ff7000',fg='white')
+    difficlulty_button.config(activebackground=difficlulty_button['bg'],activeforeground=difficlulty_button['fg'],bd=3,relief='raised')
 
     tutorial_button.place(anchor='center',relx=0.85,rely=0.87,width=200,height=100)
     tutorial_button.config(font=('Arial',30),bg='#ff7000',fg='white')
@@ -129,8 +138,38 @@ def menu():
     root.mainloop()
     # root.update()
 
-def options():
-    pass
+def difficlulty():
+    '''select difficulty'''
+    global menuscreen,root,screenWidth,screenHeight,gridSize
+
+    difficlultycanvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
+    difficlultycanvas.place(x=0,y=0)
+
+    hard_button = tk.Button(difficlultycanvas,text='Hard',command=hard)
+    hard_button.place(anchor='s',relx=0.5,rely=0.4,width=200,height=100)
+    hard_button.config(font=('Arial',30),bg='#ff0000',fg='white')
+    hard_button.config(activebackground=hard_button['bg'],activeforeground=hard_button['fg'],bd=3,relief='raised')
+
+    easy_button = tk.Button(difficlultycanvas,text='Easy',command=easy)
+    easy_button.place(anchor='s',relx=0.5,rely=0.8,width=200,height=100)
+    easy_button.config(font=('Arial',30),bg='#ff0000',fg='white')
+    easy_button.config(activebackground=easy_button['bg'],activeforeground=easy_button['fg'],bd=3,relief='raised')
+
+def hard():
+    global init_delay,aisnake_length,aisnake_speed,ragemode_length
+    init_delay = 120
+    aisnake_length = 10
+    ragemode_length = 5
+    aisnake_speed = 2
+    menu()
+
+def easy():
+    global init_delay,aisnake_length,aisnake_speed,ragemode_length
+    init_delay = 140
+    aisnake_length = 6
+    ragemode_length = 3
+    aisnake_speed = 4
+    menu()
 
 def page_1():
     '''controls & food explained'''
@@ -472,7 +511,7 @@ def game_finished():
     time.sleep(2)
     screen.fill(colordict['black'])
 
-    font = pygame.font.SysFont('Calibri', 30)
+    font = pygame.font.SysFont('Segoe Print', 30)
     score_text = font.render("Congrats you got " + str(total_score) 
         + " points!",4,colordict['red'])
     score_text_rect = score_text.get_rect()
@@ -534,7 +573,7 @@ def generate_food_pos():
         while ((x_food, y_food) in bodies
             or obs_x*gridSize < x_food+gridSize/2 < (obs_x+obs_w)*gridSize
             and obs_y*gridSize < y_food+gridSize/2 < (obs_y+obs_h)*gridSize):
-            print('fucku')
+            # print('fucku')
             x_food = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
             y_food = random.randint(1, screenHeight/gridSize - 2) * gridSize # make it only generate in parameter
     # print(x_food,y_food)
@@ -611,7 +650,8 @@ def level_4():
     """level 4 - meet boss"""
     global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
     screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common,obstacle_index,\
-    keys,x_ammunition,y_ammunition,snakey,ticks,total_score,bodies,x_food,y_food,x_slowpill,y_slowpill
+    keys,x_ammunition,y_ammunition,snakey,ticks,total_score,bodies,x_food,y_food,x_slowpill,y_slowpill,\
+    aisnake_speed,ragemode_length
     # if game_finished == True: #score = 10
     #     next_level_unlocked = True
     # else:
@@ -623,7 +663,7 @@ def level_4():
     if len(bullet_pos_n_dir) != 0:
         bullet_move()
 
-    if ticks%3 == 0: #make the AI snake move slower
+    if ticks%aisnake_speed == 0: #make the AI snake move slower
         snakey.direction()
         snakey.update_pos()
         snakey.update_bodies()
@@ -632,7 +672,7 @@ def level_4():
     snakey.lose_health()
     snakey.if_die() #then game over
     # print(snakey.length)
-    if snakey.length <= 5:
+    if snakey.length <= ragemode_length:
         snakey.rage_mode()
     # print(bodies,snakey.bodies)
 
@@ -666,7 +706,7 @@ def level_5(): #end_game
 def level_common(level,next_level):
     global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
     screenWidth,gridSize,tail_length,x_player,y_player,delay,level_1,level_2,level_3,obstacle_index,\
-    level_4
+    level_4,init_delay
 
     if level != level_1:
         dict_level['level%s'%str(int(list(str(level))[list(str(level)).index('_')+1])-1)] = False
@@ -707,7 +747,7 @@ def level_common(level,next_level):
             if level == level_1:
                 obstacle(0,0,0,0,obstacle_index['left_middle_block']) #open a "hole" on the left parameter
 
-            delay = 140
+            delay = init_delay
             next_level()
 
 def bullet():
@@ -799,45 +839,6 @@ class AISnake:
             elif x_player > self.x:
                 return 'right'
 
-        # if (y_player-self.y) != 0 and (x_player-self.x) != 0:
-        #     if (-1 <= (y_player-self.y)/(x_player-self.x) <= 1 and x_player < self.x
-        #         and self.prev_direction != 'right'):
-        #         self.prev_direction = 'left'
-        #         return 'left'
-        #     elif (-1 <= (y_player-self.y)/(x_player-self.x) <= 1 and x_player > self.x
-        #         and self.prev_direction != 'left'):
-        #         self.prev_direction = 'right'
-        #         return 'right'
-        #     elif y_player < self.y and self.prev_direction != 'down':
-        #         self.prev_direction = 'up'
-        #         return 'up'
-        #     elif y_player > self.y and self.prev_direction != 'up':
-        #         self.prev_direction = 'down'
-        #         return 'down'
-        #     else:
-        #         print('hmmm')
-        #         return self.prev_direction
-        # elif x_player-self.x == 0:
-        #     if y_player < self.y and self.prev_direction != 'down':
-        #         self.prev_direction = 'up'
-        #         return 'up'
-        #     elif y_player > self.y and self.prev_direction != 'up':
-        #         self.prev_direction = 'down'
-        #         return 'down'
-        #     else:
-        #         print('hmmm')
-        #         return self.prev_direction
-        # elif y_player-self.y == 0:
-        #     if x_player < self.x and self.prev_direction != 'right':
-        #         self.prev_direction = 'left'
-        #         return 'left'
-        #     elif x_player > self.x and self.prev_direction != 'left':
-        #         self.prev_direction = 'right'
-        #         return 'right'
-        #     else:
-        #         print('hmmm')
-        #         return self.prev_direction
-
     def update_pos(self):
         '''update position'''
         k = 1 # k = speed multiplier
@@ -915,7 +916,7 @@ def snake_game():
     generate_food, next_level_unlocked,l_obs_x,l_obs_y,l_obs_w,l_obs_h,level_1,level_2,\
     total_score,obstacle_index,bullet_pos_n_dir,up,down,right,left,velocity,keys,\
     isEaten_ammunition,generate_ammunition,x_ammunition, y_ammunition,ammunition_count,\
-    ticks,game_time,root
+    ticks,game_time,root,init_delay
     
     screen = pygame.display.set_mode((screenWidth, screenHeight))
 
@@ -934,6 +935,8 @@ def snake_game():
         pygame.time.delay(delay)
 
         screen.fill((0, 0, 0))
+
+        print(delay)
 
         #start_time updates as long as snake doensn't leave (i.e. move)
         if x_player == 1*gridSize and y_player == 1*gridSize:
@@ -1044,7 +1047,7 @@ def snake_game():
                 total_score += 1
 
             #slowpill
-            if isEaten_slowpill == True and delay < 120 - score_now:
+            if isEaten_slowpill == True and delay < init_delay-20 - score_now:
                 x_slowpill, y_slowpill = generate_slowpill_pos()
                 isEaten_slowpill = False
                 generate_slowpill = True
