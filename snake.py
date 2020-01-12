@@ -59,10 +59,8 @@ def main():
     colordict = {'yellow':(255,255,0),'blue':(40,126,255),'black':(0,0,0),\
     'white':(255,255,255),'pink':(255,131,239),'red':(255,0,0),'orange':(255, 80, 42),\
     'green':(94,203,46),'purple':(204,0,182)}
-    # 54,135,255
-    total_score = 0
+    total_score = 18
     obstacle_index = dict()
-    # mov_x,mov_y,mov_w,mov_h = 0,0,0,0
     moving_obs_y_1,moving_obs_y_2 = 0,0
     bullet_pos_n_dir = dict()
     ticks = 0 #total loop counts
@@ -129,15 +127,9 @@ def menu():
     tutorial_button.place(anchor='center',relx=0.85,rely=0.87,width=200,height=100)
     tutorial_button.config(font=('Arial',30),bg='#ff7000',fg='white')
     tutorial_button.config(activebackground=tutorial_button['bg'],activeforeground=tutorial_button['fg'],bd=3,relief='raised')
-
-
-    #embed the window
-    # os.environ['SDL_WINDOWID'] = str(menuscreen.winfo_id())
-    # os.environ['SDL_VIDEODRIVER'] = 'windib'
     
     pygame.init()
     root.mainloop()
-    # root.update()
 
 def difficlulty():
     '''select difficulty'''
@@ -200,8 +192,8 @@ def page_1():
     ppimg.place(relx=0.5,rely=0.45,anchor='center')
     ppimg['bd']=0
 
-    text_you = tk.Label(p1canvas,text='This white block is you,\nuse up/down/left/right arrow to move.',font=('Segoe Print',16),bd=2,relief='solid')
-    text_you.place(anchor='center',relx=0.25,rely=0.27,width=450,height=90)
+    text_you = tk.Label(p1canvas,text='This white block is you,\nuse up/down/left/right arrow to move.\nYou can also press p to pause.',font=('Segoe Print',16),bd=2,relief='solid')
+    text_you.place(anchor='center',relx=0.25,rely=0.27,width=450,height=140)
     text_you.config(bg='#7ecd62',fg='black')
 
     text_food = tk.Label(p1canvas,text='This yellow block is food, eat it to become longer, \nand your score will +1 (+2 for Hard mode).\nThe speed will also become faster.',font=('Segoe Print',16),bd=2,relief='solid')
@@ -216,7 +208,6 @@ def page_2():
 
     p2canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
     p2canvas.place(x=0,y=0)
-    # p2canvas.lift()
 
     to_p1_button = tk.Button(p2canvas,text='Previous Page',command=page_1)
     to_p1_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
@@ -254,7 +245,6 @@ def page_3():
 
     p3canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
     p3canvas.place(x=0,y=0)
-    # p3canvas.lift()
 
     to_p2_button = tk.Button(p3canvas,text='Previous Page',command=page_2)
     to_p2_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
@@ -292,7 +282,6 @@ def page_4():
 
     p4canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
     p4canvas.place(x=0,y=0)
-    # p4canvas.lift()
 
     to_p3_button = tk.Button(p4canvas,text='Previous Page',command=page_3)
     to_p3_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
@@ -330,7 +319,6 @@ def page_5():
 
     p5canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
     p5canvas.place(x=0,y=0)
-    # p5canvas.lift()
 
     to_p4_button = tk.Button(p5canvas,text='Previous Page',command=page_4)
     to_p4_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
@@ -372,7 +360,6 @@ def page_6():
 
     p6canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
     p6canvas.place(x=0,y=0)
-    # p6canvas.lift()
 
     to_p5_button = tk.Button(p6canvas,text='Previous Page',command=page_5)
     to_p5_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
@@ -418,7 +405,6 @@ def page_7():
 
     p7canvas = tk.Canvas(menuscreen,width=screenWidth,height=screenHeight,bg='black',highlightthickness=0)
     p7canvas.place(x=0,y=0)
-    # p7canvas.lift()
 
     to_p6_button = tk.Button(p7canvas,text='Previous Page',command=page_6)
     to_p6_button.place(anchor='sw',relx=0,rely=1,width=200,height=60)
@@ -429,11 +415,6 @@ def page_7():
     to_menu_button.place(anchor='s',relx=0.5,rely=1,width=130,height=60)
     to_menu_button.config(font=('Arial',18),bg='#0036ff',fg='white')
     to_menu_button.config(activebackground=to_menu_button['bg'],activeforeground=to_menu_button['fg'],bd=3,relief='raised')
-    
-    # to_p8_button = tk.Button(p7canvas,text='Next Page',command=page_8)
-    # to_p8_button.place(anchor='se',relx=1,rely=1,width=150,height=60)
-    # to_p8_button.config(font=('Arial',18),bg='#ff0000',fg='white')
-    # to_p8_button.config(activebackground=to_p8_button['bg'],activeforeground=to_p8_button['fg'],bd=3,relief='raised')
 
     img = Image.open("ragemodepic.png")
     img = img.resize((900,int(900*(867/1613))))
@@ -486,7 +467,6 @@ def pause():
     global isGame,colordict,screen,mouse_pos,colordict
     while isGame:
         screen.fill(colordict['black'])
-        # pygame.time.delay(delay)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 isGame = False
@@ -525,7 +505,6 @@ def game_finished():
     screen.fill(colordict['black'])
     
     while isGame:
-        # pygame.time.delay(delay)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 isGame = False
@@ -576,7 +555,6 @@ def generate_food_pos():
         while ((x_food, y_food) in bodies
             or obs_x*gridSize < x_food+gridSize/2 < (obs_x+obs_w)*gridSize
             and obs_y*gridSize < y_food+gridSize/2 < (obs_y+obs_h)*gridSize):
-            # print('fucku')
             x_food = random.randint(1, screenWidth/gridSize - 2) * gridSize # grid num * grid size
             y_food = random.randint(1, screenHeight/gridSize - 2) * gridSize # make it only generate in parameter
 
@@ -610,7 +588,7 @@ def level_1():
     global tail_length, next_level_unlocked, x_player, y_player,obstacle,screenHeight,\
     screenWidth,gridSize,level_2,delay,level_common,obstacle_index
 
-    if tail_length == 11: #score = 10
+    if tail_length == 2: 
         next_level_unlocked = True
 
     level_common(level_1,level_2)
@@ -620,7 +598,7 @@ def level_2():
     global next_level_unlocked, obstacle, dict_level, gridSize, generate_food,screenHeight,\
     screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common,obstacle_index
 
-    if tail_length == 11: #score = 10
+    if tail_length == 2:
         next_level_unlocked = True
         obstacle(0,0,0,0,obstacle_index['level2_obstacle'])
     else:
@@ -638,7 +616,7 @@ def level_3():
     screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common,obstacle_index,\
     moving_obs_y_1,moving_obs_y_2,moving_obstacle
 
-    if tail_length == 11: #score = 10
+    if tail_length == 7: 
         next_level_unlocked = True
         obstacle(0,0,0,0,obstacle_index['level3_moving_obstacle_1'])
         obstacle(0,0,0,0,obstacle_index['level3_moving_obstacle_2'])
@@ -663,9 +641,7 @@ def level_4():
     screenWidth,gridSize,tail_length,x_player,y_player,delay,level_3,level_common,obstacle_index,\
     keys,x_ammunition,y_ammunition,snakey,ticks,total_score,bodies,x_food,y_food,x_slowpill,y_slowpill,\
     aisnake_speed,ragemode_length,stabbed_text,stabbed_time
-    # if game_finished == True: #score = 10
-    #     next_level_unlocked = True
-    # else:
+
     next_level_unlocked = False
 
     #press space to shoot
@@ -682,10 +658,8 @@ def level_4():
     snakey.draw_bodies()
     snakey.lose_health()
     snakey.if_die() #then game over
-    # print(snakey.length)
     if snakey.length <= ragemode_length:
         snakey.rage_mode()
-    # print(bodies,snakey.bodies)
 
     # if user touches AI snake
     for body in bodies:
@@ -693,7 +667,6 @@ def level_4():
             if (body[0] < ai_body[0]+gridSize/2 < body[0] + gridSize
                 and body[1] < ai_body[1]+gridSize/2 < body[1] + gridSize):
                 tail_length -= 1
-                # print('stabbed!!')
 
                 #show "You're hurt!" when hurt by aisnake
                 font = pygame.font.SysFont('Segoe UI Black', 25)
@@ -754,7 +727,6 @@ def level_common(level,next_level):
     elif next_level_unlocked == True:
         obstacle(0,0,0,0,obstacle_index['right_middle_block']) #open a "hole" on the right parameter
         if x_player+gridSize/2 >= screenWidth-gridSize and (screenHeight-gridSize)//2 < y_player+gridSize/2 < (screenHeight-gridSize)//2+gridSize:
-        # if x_player == screenWidth/gridSize-1 and y_player == (screenHeight/gridSize-1)/2:
             tail_length = 1
             #snake goes into the hole then appears on the left
             x_player,y_player = 1*gridSize,(screenHeight-gridSize)/2
@@ -771,7 +743,6 @@ def bullet():
     '''bullet in level 4'''
     global x_player,y_player,left,right,up,down,bullet_pos_n_dir,ammunition_count
     
-    # new_bullet_x,new_bullet_y = x_player,y_player
     if ammunition_count > 0:
         if up:
             bullet_pos_n_dir[(x_player,y_player)] = 'up'
@@ -836,7 +807,6 @@ class AISnake:
         self.y = pos[1]
         self.bodies = [(self.x + (length+1-i)*gridSize, self.y) for i in range(length)] #head pos is the last ones in list]
         self.length = length
-        # self.prev_direction = None
 
     def direction(self):
         '''update direction'''
@@ -897,7 +867,6 @@ class AISnake:
                 if (body[0] < pos[0]+gridSize/2 < body[0]+gridSize
                     and body[1] < pos[1]+gridSize/2 < body[1]+gridSize):
                     self.length -= 1
-                    # print('yeah')
 
                     # show 'Shot on target!' when hurt aisnake
                     font = pygame.font.SysFont('Segoe UI Black', 25)
@@ -967,8 +936,6 @@ def snake_game():
 
         screen.fill((0, 0, 0))
 
-        # print(delay)
-
         #start_time updates as long as snake doensn't leave (i.e. move)
         if x_player == 1*gridSize and y_player == 1*gridSize:
             start_time = pygame.time.get_ticks()
@@ -1020,9 +987,6 @@ def snake_game():
             right = True
             up = left = down = False
 
-        # print(keys[pygame.K_UP])
-        # bodies.append((x_player, y_player))
-
         if up :
             y_player -= velocity
         elif down :
@@ -1032,35 +996,12 @@ def snake_game():
         elif right :
             x_player += velocity
 
-        #when touches boundary
-        # if (x_player < 0 or x_player > screenWidth - gridSize 
-        #         or y_player < 0 or y_player > screenHeight - gridSize):
-        #     game_finished()
-
-        # bodies.append((x_player, y_player))
-        # print(len(bodies))
         while (len(bodies) > tail_length):
             del bodies[0]
 
         #draw the body
         for body in bodies :
             pygame.draw.rect(screen, colordict['white'], (body[0], body[1], gridSize, gridSize))
-
-        #update the screen
-        # pygame.display.update()
-
-        # for circle area game
-        # pygame.draw.line(screen,colordict['blue'],(5*gridSize,1.5*gridSize),(8*gridSize,1.5*gridSize),gridSize)
-        # print(bodies)
-
-        # if dict_level['level1'] == True:
-        #     level_1()
-        # if dict_level['level2'] == True:
-        #     level_2()
-        # if dict_level['level3'] == True:
-        #     level_3()
-        # if dict_level['level4'] == True:
-        #     level_4()
 
         if next_level_unlocked == True:
             generate_slowpill = False
@@ -1105,31 +1046,20 @@ def snake_game():
                 if generate_ammunition == True:
                     pygame.draw.rect(screen,colordict['green'],(x_ammunition,y_ammunition,gridSize,gridSize))
 
-
-
-
-
         #draw fireballs(bullets)
         fireball_image = pygame.image.load('fireball.png')
         fireball_image = pygame.transform.scale(fireball_image,(50,50))
         fireball_image.convert()
         for pos in list(bullet_pos_n_dir):
             screen.blit(fireball_image,(pos[0],pos[1]))
-            # pygame.draw.rect(screen,colordict['orange'],(pos[0],pos[1],gridSize,gridSize))
-
+           
         #draw obstacle
         for obs_x,obs_y,obs_w,obs_h in zip(l_obs_x,l_obs_y,l_obs_w,l_obs_h):
             pygame.draw.rect(screen,colordict['blue'],(obs_x*gridSize,obs_y*gridSize,obs_w*gridSize,obs_h*gridSize))
         
         #draw food
-        # snake_food_image = pygame.image.load('snake_food.gif')
-        # snake_food_image = pygame.transform.scale(snake_food_image,(40,40))
-        # snake_food_image.convert()
         if generate_food == True:
-            # screen.blit(snake_food_image,(x_food,y_food))
             pygame.draw.rect(screen,colordict['yellow'], (x_food, y_food, gridSize, gridSize))
-            # print(x_food,y_food,'nice')
-            # pygame.draw.circle(screen,colordict['yellow'], (x_food+gridSize//2,y_food+gridSize//2),gridSize//3)
 
         #draw slowpill
         if generate_slowpill == True:
@@ -1140,10 +1070,6 @@ def snake_game():
         font = pygame.font.SysFont('Segoe UI Black', 25)
         textScore = font.render("Score: {}".format(total_score), True, colordict['black'])
         screen.blit(textScore, (10, 3))
-        
-        # font = pygame.font.SysFont('Segoe UI Black', 25)
-        # time_text = font.render('time: %ss'%str(game_time//1000), True, colordict['red'])
-        # screen.blit(time_text, (950,5))
 
         if dict_level['level4'] == True:
             #draw bullet image
@@ -1163,6 +1089,7 @@ def snake_game():
                 print_sot = True
             else:
                 print_sot = False
+                del sot_time
         except:
             pass
 
@@ -1172,6 +1099,7 @@ def snake_game():
                 print_stabbed = True
             else:
                 print_stabbed = False
+                del stabbed_time
         except:
             pass
 
@@ -1180,5 +1108,4 @@ def snake_game():
         root.update()
 
 if __name__ == '__main__':
-    # main()
     initial()
